@@ -1,0 +1,2833 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ส่งข้อมูลรูปบาดแผลหลังผ่าตัด</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: rgba(15, 92, 92, 0.15);
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #F4F6F8;
+      color: #111827;
+      font-family: -apple-system, BlinkMacSystemFont, "Sarabun", "Noto Sans Thai", "Tahoma", "Leelawadee UI", "Segoe UI", Roboto, sans-serif;
+      font-size: 18px;
+      line-height: 1.55;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body.font-normal {
+      font-size: 18px;
+    }
+
+    body.font-large {
+      font-size: 21px;
+    }
+
+    body.font-xlarge {
+      font-size: 24px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 12px 12px 48px 12px;
+    }
+
+    /* Banners & Toasts */
+    .top-banner {
+      display: none;
+      margin-bottom: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 2px solid #D97706;
+      background-color: #FEF3C7;
+      color: #78350F;
+      font-weight: bold;
+      font-size: 0.92em;
+    }
+
+    .top-banner.banner-error {
+      border-color: #B91C1C;
+      background-color: #FEE2E2;
+      color: #7F1D1D;
+    }
+
+    .top-banner.banner-visible {
+      display: block;
+    }
+
+    .top-banner code {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 2px 6px;
+      background-color: #FFFFFF;
+      border: 1px solid #D97706;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.85em;
+      word-break: break-all;
+    }
+
+    .toast-region {
+      position: fixed;
+      top: 10px;
+      left: 12px;
+      right: 12px;
+      z-index: 900;
+      max-width: 616px;
+      margin: 0 auto;
+      pointer-events: none;
+    }
+
+    .toast-item {
+      pointer-events: auto;
+      margin-bottom: 8px;
+      padding: 13px 16px;
+      border-radius: 10px;
+      border: 2px solid #0F5C5C;
+      background-color: #0F5C5C;
+      color: #FFFFFF;
+      font-weight: bold;
+      font-size: 0.92em;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .toast-item.toast-success {
+      background-color: #166534;
+      border-color: #14532D;
+    }
+
+    .toast-item.toast-warning {
+      background-color: #92400E;
+      border-color: #78350F;
+    }
+
+    .toast-item.toast-error {
+      background-color: #991B1B;
+      border-color: #7F1D1D;
+    }
+
+    /* Cards */
+    .card {
+      background-color: #FFFFFF;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 12px;
+      padding: 18px 16px;
+      margin-bottom: 14px;
+    }
+
+    .card.header-card {
+      border-top: 8px solid #0F5C5C;
+      padding-top: 18px;
+    }
+
+    .card.card-invalid {
+      border-color: #B91C1C;
+      border-width: 2px;
+      background-color: #FFFDFD;
+    }
+
+    .app-title {
+      margin: 0 0 8px 0;
+      font-size: 1.45em;
+      line-height: 1.3;
+      color: #111827;
+      font-weight: bold;
+    }
+
+    .app-subtitle {
+      margin: 0 0 10px 0;
+      color: #374151;
+      font-size: 0.92em;
+    }
+
+    .required-legend {
+      margin: 0 0 14px 0;
+      color: #B91C1C;
+      font-size: 0.88em;
+      font-weight: bold;
+    }
+
+    /* Font size switcher */
+    .font-bar {
+      border-top: 1px solid #E2E8F0;
+      padding-top: 12px;
+      margin-top: 8px;
+    }
+
+    .font-bar-label {
+      display: block;
+      font-size: 0.86em;
+      font-weight: bold;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .font-btn-row {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .font-btn-cell {
+      display: table-cell;
+      padding-right: 6px;
+    }
+
+    .font-btn-cell:last-child {
+      padding-right: 0;
+    }
+
+    .font-btn {
+      width: 100%;
+      min-height: 44px;
+      padding: 8px 6px;
+      border: 1.5px solid #94A3B8;
+      border-radius: 8px;
+      background-color: #F8FAFC;
+      color: #111827;
+      font-family: inherit;
+      font-size: 0.88em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .font-btn.active {
+      background-color: #0F5C5C;
+      border-color: #0F5C5C;
+      color: #FFFFFF;
+    }
+
+    /* Field headings */
+    .field-title {
+      display: block;
+      margin: 0 0 6px 0;
+      font-size: 1.08em;
+      font-weight: bold;
+      color: #111827;
+    }
+
+    .req-star {
+      color: #B91C1C;
+      font-weight: bold;
+    }
+
+    .field-hint {
+      margin: 0 0 12px 0;
+      font-size: 0.86em;
+      color: #374151;
+    }
+
+    .field-error-msg {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background-color: #FEE2E2;
+      border: 1.5px solid #B91C1C;
+      color: #7F1D1D;
+      font-size: 0.88em;
+      font-weight: bold;
+    }
+
+    .field-error-msg.visible {
+      display: block;
+    }
+
+    /* Inputs */
+    .text-input {
+      width: 100%;
+      min-height: 54px;
+      padding: 12px 14px;
+      border: 2px solid #94A3B8;
+      border-radius: 10px;
+      background-color: #FFFFFF;
+      color: #111827;
+      font-family: inherit;
+      font-size: 1em;
+      line-height: 1.4;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .text-input:focus {
+      outline: none;
+      border-color: #0F5C5C;
+      background-color: #F8FCFC;
+    }
+
+    /* Radio Grid (No flex gap for old phones) */
+    .radio-grid {
+      overflow: hidden;
+      margin: 0 -5px;
+    }
+
+    .radio-col {
+      float: left;
+      width: 50%;
+      padding: 0 5px 10px 5px;
+    }
+
+    @media (max-width: 339px) {
+      .radio-col {
+        float: none;
+        width: 100%;
+      }
+    }
+
+    .radio-card {
+      display: block;
+      position: relative;
+      min-height: 54px;
+      padding: 12px 12px 12px 44px;
+      border: 2px solid #CBD5E1;
+      border-radius: 10px;
+      background-color: #FFFFFF;
+      color: #111827;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    .radio-card.selected {
+      border-color: #0F5C5C;
+      background-color: #EDF7F7;
+      color: #0B4A4A;
+    }
+
+    .radio-card input[type="radio"] {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      margin-top: -11px;
+      width: 22px;
+      height: 22px;
+      accent-color: #0F5C5C;
+      cursor: pointer;
+    }
+
+    .radio-other-card {
+      clear: both;
+      margin-top: 2px;
+      padding: 12px 14px;
+      border: 2px solid #CBD5E1;
+      border-radius: 10px;
+      background-color: #FFFFFF;
+    }
+
+    .radio-other-card.selected {
+      border-color: #0F5C5C;
+      background-color: #EDF7F7;
+    }
+
+    .radio-other-label {
+      display: block;
+      position: relative;
+      padding-left: 34px;
+      min-height: 32px;
+      font-weight: bold;
+      color: #111827;
+      cursor: pointer;
+      margin-bottom: 8px;
+    }
+
+    .radio-other-label input[type="radio"] {
+      position: absolute;
+      left: 0;
+      top: 4px;
+      width: 22px;
+      height: 22px;
+      accent-color: #0F5C5C;
+      cursor: pointer;
+    }
+
+    .other-input-wrap {
+      margin-top: 4px;
+    }
+
+    /* Section divider */
+    .section-banner {
+      background-color: #E6F2F2;
+      border: 1.5px solid #0F5C5C;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+
+    .section-heading {
+      margin: 0 0 6px 0;
+      font-size: 1.12em;
+      font-weight: bold;
+      color: #0B4A4A;
+    }
+
+    .count-pill {
+      display: inline-block;
+      margin-bottom: 6px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background-color: #0F5C5C;
+      color: #FFFFFF;
+      font-size: 0.86em;
+      font-weight: bold;
+    }
+
+    .section-note {
+      margin: 0;
+      font-size: 0.86em;
+      color: #1E293B;
+    }
+
+    /* Photo upload cards */
+    .slot-header {
+      margin-bottom: 10px;
+    }
+
+    .slot-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background-color: #F1F5F9;
+      border: 1px solid #CBD5E1;
+      color: #334155;
+      font-size: 0.8em;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .slot-actions-table {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .slot-action-cell {
+      display: table-cell;
+      width: 50%;
+      vertical-align: top;
+    }
+
+    .slot-action-cell.cell-left {
+      padding-right: 5px;
+    }
+
+    .slot-action-cell.cell-right {
+      padding-left: 5px;
+    }
+
+    .pick-btn {
+      display: block;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      min-height: 54px;
+      padding: 12px 8px;
+      border: 2px solid #0F5C5C;
+      border-radius: 10px;
+      background-color: #F2F9F9;
+      color: #0B4A4A;
+      text-align: center;
+      font-family: inherit;
+      font-size: 0.94em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .pick-btn.btn-gallery {
+      border-color: #475569;
+      background-color: #F8FAFC;
+      color: #1E293B;
+    }
+
+    .pick-btn:active {
+      background-color: #DCEFEF;
+    }
+
+    .pick-btn svg {
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+      margin-top: -3px;
+    }
+
+    .hidden-file-input {
+      position: absolute;
+      left: -9999px;
+      top: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
+
+    /* Preview Box */
+    .preview-box {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 10px;
+      background-color: #F8FAFC;
+    }
+
+    .preview-box.visible {
+      display: block;
+    }
+
+    .preview-img-wrap {
+      text-align: center;
+      background-color: #E2E8F0;
+      border-radius: 8px;
+      padding: 6px;
+      margin-bottom: 10px;
+    }
+
+    .preview-img {
+      display: block;
+      max-width: 100%;
+      max-height: 240px;
+      margin: 0 auto;
+      border-radius: 6px;
+    }
+
+    .video-badge-box {
+      display: none;
+      padding: 14px;
+      border-radius: 8px;
+      background-color: #E0F2FE;
+      border: 1.5px solid #0369A1;
+      color: #0C4A6E;
+      font-weight: bold;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+      word-break: break-word;
+    }
+
+    .video-badge-box.visible {
+      display: block;
+    }
+
+    .preview-meta {
+      margin-bottom: 10px;
+      font-size: 0.86em;
+      font-weight: bold;
+      color: #166534;
+    }
+
+    .preview-meta.meta-uploaded {
+      color: #0B4A4A;
+    }
+
+    .preview-meta.meta-pending {
+      color: #92400E;
+    }
+
+    .preview-tools-table {
+      display: table;
+      width: 100%;
+    }
+
+    .preview-tool-cell {
+      display: table-cell;
+      width: 50%;
+    }
+
+    .preview-tool-cell.cell-left {
+      padding-right: 5px;
+    }
+
+    .preview-tool-cell.cell-right {
+      padding-left: 5px;
+    }
+
+    .preview-tool-cell.full-cell {
+      width: 100%;
+      padding: 0;
+    }
+
+    .small-action-btn {
+      width: 100%;
+      min-height: 46px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1.5px solid #475569;
+      background-color: #FFFFFF;
+      color: #1E293B;
+      font-family: inherit;
+      font-size: 0.88em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .small-action-btn.btn-remove {
+      border-color: #B91C1C;
+      color: #991B1B;
+      background-color: #FEF2F2;
+    }
+
+    /* Readiness & Primary Actions */
+    .readiness-bar {
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1.5px solid #CBD5E1;
+      background-color: #FFFFFF;
+      margin-bottom: 12px;
+      font-size: 0.92em;
+      font-weight: bold;
+      color: #374151;
+    }
+
+    .readiness-bar.ready {
+      border-color: #166534;
+      background-color: #F0FDF4;
+      color: #166534;
+    }
+
+    .primary-submit-btn {
+      display: block;
+      width: 100%;
+      min-height: 58px;
+      padding: 14px 18px;
+      border: none;
+      border-radius: 12px;
+      background-color: #0F5C5C;
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 1.12em;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 12px;
+    }
+
+    .primary-submit-btn:active {
+      background-color: #0B4A4A;
+    }
+
+    .primary-submit-btn:disabled {
+      background-color: #64748B;
+      cursor: not-allowed;
+    }
+
+    .secondary-clear-btn {
+      display: block;
+      width: 100%;
+      min-height: 50px;
+      padding: 12px 16px;
+      border: 2px solid #94A3B8;
+      border-radius: 12px;
+      background-color: #FFFFFF;
+      color: #334155;
+      font-family: inherit;
+      font-size: 0.96em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Modals & Progress Overlay */
+    .overlay-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 950;
+      background-color: rgba(15, 23, 42, 0.78);
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .overlay-backdrop.visible {
+      display: block;
+    }
+
+    .modal-card {
+      max-width: 540px;
+      margin: 24px auto;
+      background-color: #FFFFFF;
+      border: 2px solid #0F5C5C;
+      border-radius: 14px;
+      padding: 20px 18px;
+    }
+
+    .modal-title {
+      margin: 0 0 10px 0;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: #111827;
+    }
+
+    .modal-text {
+      margin: 0 0 16px 0;
+      color: #374151;
+      font-size: 0.95em;
+    }
+
+    .modal-btn-stack button {
+      display: block;
+      width: 100%;
+      min-height: 52px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .modal-btn-stack button:last-child {
+      margin-bottom: 0;
+    }
+
+    .btn-modal-primary {
+      border: none;
+      background-color: #0F5C5C;
+      color: #FFFFFF;
+    }
+
+    .btn-modal-danger {
+      border: none;
+      background-color: #B91C1C;
+      color: #FFFFFF;
+    }
+
+    .btn-modal-secondary {
+      border: 2px solid #94A3B8;
+      background-color: #FFFFFF;
+      color: #1E293B;
+    }
+
+    /* Progress UI */
+    .progress-track {
+      width: 100%;
+      height: 18px;
+      background-color: #E2E8F0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background-color: #0F5C5C;
+    }
+
+    .progress-percent-text {
+      font-size: 0.92em;
+      font-weight: bold;
+      color: #0B4A4A;
+      margin-bottom: 12px;
+    }
+
+    .step-list {
+      list-style: none;
+      margin: 0 0 14px 0;
+      padding: 0;
+    }
+
+    .step-item {
+      padding: 10px 12px;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 0.92em;
+      background-color: #F8FAFC;
+      color: #334155;
+    }
+
+    .step-item.step-active {
+      border-color: #0F5C5C;
+      background-color: #EDF7F7;
+      color: #0B4A4A;
+      font-weight: bold;
+    }
+
+    .step-item.step-done {
+      border-color: #166534;
+      background-color: #F0FDF4;
+      color: #166534;
+      font-weight: bold;
+    }
+
+    .step-item.step-warn {
+      border-color: #D97706;
+      background-color: #FEF3C7;
+      color: #78350F;
+      font-weight: bold;
+    }
+
+    .step-item.step-error {
+      border-color: #B91C1C;
+      background-color: #FEE2E2;
+      color: #7F1D1D;
+      font-weight: bold;
+    }
+
+    .file-progress-sublist {
+      margin-top: 8px;
+      padding-left: 10px;
+      border-left: 3px solid #94A3B8;
+      font-weight: normal;
+      font-size: 0.92em;
+    }
+
+    .file-subitem {
+      margin-top: 4px;
+    }
+
+    .progress-error-box {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background-color: #FEE2E2;
+      border: 2px solid #B91C1C;
+      color: #7F1D1D;
+      font-size: 0.92em;
+      font-weight: bold;
+    }
+
+    .progress-error-box.visible {
+      display: block;
+    }
+
+    .progress-retry-actions {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .progress-retry-actions.visible {
+      display: block;
+    }
+
+    /* Success Screen */
+    .success-screen {
+      display: none;
+    }
+
+    .success-screen.visible {
+      display: block;
+    }
+
+    .success-banner {
+      padding: 18px 16px;
+      border-radius: 12px;
+      background-color: #166534;
+      color: #FFFFFF;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .success-banner h2 {
+      margin: 8px 0 4px 0;
+      font-size: 1.35em;
+    }
+
+    .success-banner p {
+      margin: 0;
+      font-size: 0.92em;
+    }
+
+    .summary-row {
+      padding: 10px 0;
+      border-bottom: 1px solid #E2E8F0;
+      font-size: 0.95em;
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      display: block;
+      font-weight: bold;
+      color: #374151;
+      font-size: 0.88em;
+    }
+
+    .summary-value {
+      display: block;
+      color: #111827;
+      font-weight: bold;
+      margin-top: 2px;
+    }
+
+    .telegram-status-box {
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      font-weight: bold;
+      font-size: 0.92em;
+      border: 1.5px solid #166534;
+      background-color: #F0FDF4;
+      color: #166534;
+    }
+
+    .telegram-status-box.tg-warn {
+      border-color: #D97706;
+      background-color: #FEF3C7;
+      color: #78350F;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: #475569;
+      font-size: 0.82em;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body class="font-normal">
+
+  <!-- Toast notifications -->
+  <div id="toastRegion" class="toast-region" aria-live="polite"></div>
+
+  <div class="app-container">
+
+    <!-- Conditional Warning Banners -->
+    <div id="offlineBanner" class="top-banner banner-error" role="alert">
+      ไม่พบการเชื่อมต่ออินเทอร์เน็ต กรุณาเปิดสัญญาณ Wi-Fi หรือ 4G/5G ก่อนกดส่งข้อมูล
+    </div>
+
+    <div id="setupBanner" class="top-banner" role="status">
+      ยังไม่ได้ใส่ลิงก์ Google Apps Script Web App (/exec): กรุณาแก้ไขค่า
+      <code>GAS_WEB_APP_URL</code> ในไฟล์ <code>index.html</code> ก่อนนำไปใช้งานจริง
+    </div>
+
+    <!-- Main Form Wrapper -->
+    <div id="formScreen">
+      <div class="card header-card">
+        <h1 class="app-title">ส่งข้อมูลรูปบาดแผลหลังผ่าตัด</h1>
+        <p class="app-subtitle">
+          แบบฟอร์มส่งภาพบาดแผลหลังผ่าตัด (ไม่ต้องลงชื่อเข้าใช้ Google)
+        </p>
+        <p class="required-legend">* ระบุว่าเป็นคำถามที่จำเป็น</p>
+
+        <div class="font-bar">
+          <span class="font-bar-label">ขนาดตัวอักษร:</span>
+          <div class="font-btn-row">
+            <div class="font-btn-cell">
+              <button type="button" class="font-btn active" id="fontBtnNormal" data-font="font-normal">ปกติ</button>
+            </div>
+            <div class="font-btn-cell">
+              <button type="button" class="font-btn" id="fontBtnLarge" data-font="font-large">ใหญ่</button>
+            </div>
+            <div class="font-btn-cell">
+              <button type="button" class="font-btn" id="fontBtnXLarge" data-font="font-xlarge">ใหญ่มาก</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <form id="woundForm" novalidate>
+        <!-- 1. ชื่อ-นามสกุลผู้ป่วย -->
+        <div class="card" id="cardPatientName">
+          <label class="field-title" for="patientNameInput">
+            ชื่อ-นามสกุลผู้ป่วย <span class="req-star">*</span>
+          </label>
+          <p class="field-hint">พิมพ์ชื่อและนามสกุลของผู้ป่วยให้ชัดเจน</p>
+          <input
+            type="text"
+            id="patientNameInput"
+            name="patientName"
+            class="text-input"
+            autocomplete="name"
+            placeholder="เช่น นายสมชาย ใจดี"
+            required
+          >
+          <div id="errPatientName" class="field-error-msg">กรุณากรอกชื่อ-นามสกุลผู้ป่วย</div>
+        </div>
+
+        <!-- 2. หลังกลับบ้าน -->
+        <div class="card" id="cardDays">
+          <div class="field-title">
+            หลังกลับบ้าน <span class="req-star">*</span>
+          </div>
+          <p class="field-hint">*หากเลือกอื่นๆ ให้ใส่ข้อมูลจำนวนวัน ตัวอย่างเช่น 10 วัน</p>
+
+          <div class="radio-grid" id="daysRadioGroup">
+            <div class="radio-col">
+              <label class="radio-card" data-radio-card="1 วัน">
+                <input type="radio" name="daysChoice" value="1 วัน">
+                <span>1 วัน</span>
+              </label>
+            </div>
+            <div class="radio-col">
+              <label class="radio-card" data-radio-card="2 วัน">
+                <input type="radio" name="daysChoice" value="2 วัน">
+                <span>2 วัน</span>
+              </label>
+            </div>
+            <div class="radio-col">
+              <label class="radio-card" data-radio-card="3 วัน">
+                <input type="radio" name="daysChoice" value="3 วัน">
+                <span>3 วัน</span>
+              </label>
+            </div>
+            <div class="radio-col">
+              <label class="radio-card" data-radio-card="7 วัน">
+                <input type="radio" name="daysChoice" value="7 วัน">
+                <span>7 วัน</span>
+              </label>
+            </div>
+            <div class="radio-col">
+              <label class="radio-card" data-radio-card="14 วัน">
+                <input type="radio" name="daysChoice" value="14 วัน">
+                <span>14 วัน</span>
+              </label>
+            </div>
+            <div class="radio-col">
+              <label class="radio-card" data-radio-card="28 วัน">
+                <input type="radio" name="daysChoice" value="28 วัน">
+                <span>28 วัน</span>
+              </label>
+            </div>
+            <div class="radio-col">
+              <label class="radio-card" data-radio-card="90 วัน">
+                <input type="radio" name="daysChoice" value="90 วัน">
+                <span>90 วัน</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="radio-other-card" id="otherDayCard">
+            <label class="radio-other-label" for="daysOtherRadio">
+              <input type="radio" id="daysOtherRadio" name="daysChoice" value="__OTHER__">
+              <span>อื่นๆ:</span>
+            </label>
+            <div class="other-input-wrap">
+              <input
+                type="text"
+                id="daysOtherInput"
+                class="text-input"
+                placeholder="ตัวอย่างเช่น 10 วัน"
+              >
+            </div>
+          </div>
+
+          <div id="errDays" class="field-error-msg">กรุณาเลือกจำนวนวันหลังกลับบ้าน</div>
+        </div>
+
+        <!-- Section Header for Wound Photos -->
+        <div class="section-banner">
+          <div class="section-heading">อัปโหลดรูปภาพบาดแผล</div>
+          <div class="count-pill" id="attachedCountPill">แนบไฟล์แล้ว 0/5 ช่อง</div>
+          <p class="section-note">
+            เลือกเฉพาะบริเวณที่มีบาดแผล (ไม่บังคับทุกช่อง) ระบบจะปรับขนาดรูปให้อัตโนมัติเพื่อให้ส่งได้รวดเร็ว
+          </p>
+        </div>
+
+        <!-- 3. ภาพบาดแผลบริเวณ หน้าอก -->
+        <div class="card" id="card_chest">
+          <div class="slot-header">
+            <span class="slot-badge">ไม่บังคับ • รูปภาพ 1 รูป สูงสุด 10 MB</span>
+            <div class="field-title">ภาพบาดแผลบริเวณ หน้าอก</div>
+          </div>
+          <div class="slot-actions-table">
+            <div class="slot-action-cell cell-left">
+              <label class="pick-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <span>ถ่ายรูป</span>
+                <input type="file" class="hidden-file-input" accept="image/*" capture="environment" data-slot="chest">
+              </label>
+            </div>
+            <div class="slot-action-cell cell-right">
+              <label class="pick-btn btn-gallery">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <span>เลือกรูป</span>
+                <input type="file" class="hidden-file-input" accept="image/*" data-slot="chest">
+              </label>
+            </div>
+          </div>
+          <div class="preview-box" id="preview_chest">
+            <div class="preview-img-wrap" id="imgWrap_chest">
+              <img class="preview-img" id="img_chest" alt="ตัวอย่างภาพบาดแผลบริเวณหน้าอก">
+            </div>
+            <div class="preview-meta" id="meta_chest"></div>
+            <div class="preview-tools-table">
+              <div class="preview-tool-cell cell-left">
+                <button type="button" class="small-action-btn" data-rotate="chest">หมุนภาพ 90°</button>
+              </div>
+              <div class="preview-tool-cell cell-right">
+                <button type="button" class="small-action-btn btn-remove" data-remove="chest">ลบรูปนี้</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. ภาพบาดแผลบริเวณ แขนซ้าย -->
+        <div class="card" id="card_leftArm">
+          <div class="slot-header">
+            <span class="slot-badge">ไม่บังคับ • รูปภาพ 1 รูป สูงสุด 10 MB</span>
+            <div class="field-title">ภาพบาดแผลบริเวณ แขนซ้าย</div>
+          </div>
+          <div class="slot-actions-table">
+            <div class="slot-action-cell cell-left">
+              <label class="pick-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <span>ถ่ายรูป</span>
+                <input type="file" class="hidden-file-input" accept="image/*" capture="environment" data-slot="leftArm">
+              </label>
+            </div>
+            <div class="slot-action-cell cell-right">
+              <label class="pick-btn btn-gallery">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <span>เลือกรูป</span>
+                <input type="file" class="hidden-file-input" accept="image/*" data-slot="leftArm">
+              </label>
+            </div>
+          </div>
+          <div class="preview-box" id="preview_leftArm">
+            <div class="preview-img-wrap" id="imgWrap_leftArm">
+              <img class="preview-img" id="img_leftArm" alt="ตัวอย่างภาพบาดแผลบริเวณแขนซ้าย">
+            </div>
+            <div class="preview-meta" id="meta_leftArm"></div>
+            <div class="preview-tools-table">
+              <div class="preview-tool-cell cell-left">
+                <button type="button" class="small-action-btn" data-rotate="leftArm">หมุนภาพ 90°</button>
+              </div>
+              <div class="preview-tool-cell cell-right">
+                <button type="button" class="small-action-btn btn-remove" data-remove="leftArm">ลบรูปนี้</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. ภาพบาดแผลบริเวณ ขาขวา -->
+        <div class="card" id="card_rightLeg">
+          <div class="slot-header">
+            <span class="slot-badge">ไม่บังคับ • รูปภาพ 1 รูป สูงสุด 10 MB</span>
+            <div class="field-title">ภาพบาดแผลบริเวณ ขาขวา</div>
+          </div>
+          <div class="slot-actions-table">
+            <div class="slot-action-cell cell-left">
+              <label class="pick-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <span>ถ่ายรูป</span>
+                <input type="file" class="hidden-file-input" accept="image/*" capture="environment" data-slot="rightLeg">
+              </label>
+            </div>
+            <div class="slot-action-cell cell-right">
+              <label class="pick-btn btn-gallery">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <span>เลือกรูป</span>
+                <input type="file" class="hidden-file-input" accept="image/*" data-slot="rightLeg">
+              </label>
+            </div>
+          </div>
+          <div class="preview-box" id="preview_rightLeg">
+            <div class="preview-img-wrap" id="imgWrap_rightLeg">
+              <img class="preview-img" id="img_rightLeg" alt="ตัวอย่างภาพบาดแผลบริเวณขาขวา">
+            </div>
+            <div class="preview-meta" id="meta_rightLeg"></div>
+            <div class="preview-tools-table">
+              <div class="preview-tool-cell cell-left">
+                <button type="button" class="small-action-btn" data-rotate="rightLeg">หมุนภาพ 90°</button>
+              </div>
+              <div class="preview-tool-cell cell-right">
+                <button type="button" class="small-action-btn btn-remove" data-remove="rightLeg">ลบรูปนี้</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. ภาพบาดแผลบริเวณ ขาซ้าย -->
+        <div class="card" id="card_leftLeg">
+          <div class="slot-header">
+            <span class="slot-badge">ไม่บังคับ • รูปภาพ 1 รูป สูงสุด 10 MB</span>
+            <div class="field-title">ภาพบาดแผลบริเวณ ขาซ้าย</div>
+          </div>
+          <div class="slot-actions-table">
+            <div class="slot-action-cell cell-left">
+              <label class="pick-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <span>ถ่ายรูป</span>
+                <input type="file" class="hidden-file-input" accept="image/*" capture="environment" data-slot="leftLeg">
+              </label>
+            </div>
+            <div class="slot-action-cell cell-right">
+              <label class="pick-btn btn-gallery">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <span>เลือกรูป</span>
+                <input type="file" class="hidden-file-input" accept="image/*" data-slot="leftLeg">
+              </label>
+            </div>
+          </div>
+          <div class="preview-box" id="preview_leftLeg">
+            <div class="preview-img-wrap" id="imgWrap_leftLeg">
+              <img class="preview-img" id="img_leftLeg" alt="ตัวอย่างภาพบาดแผลบริเวณขาซ้าย">
+            </div>
+            <div class="preview-meta" id="meta_leftLeg"></div>
+            <div class="preview-tools-table">
+              <div class="preview-tool-cell cell-left">
+                <button type="button" class="small-action-btn" data-rotate="leftLeg">หมุนภาพ 90°</button>
+              </div>
+              <div class="preview-tool-cell cell-right">
+                <button type="button" class="small-action-btn btn-remove" data-remove="leftLeg">ลบรูปนี้</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. รูปเพิ่มเติม -->
+        <div class="card" id="card_extra">
+          <div class="slot-header">
+            <span class="slot-badge">ไม่บังคับ • รูปภาพ หรือ วิดีโอ 1 ไฟล์ สูงสุด 10 MB</span>
+            <div class="field-title">รูปเพิ่มเติม</div>
+          </div>
+          <div class="slot-actions-table">
+            <div class="slot-action-cell cell-left">
+              <label class="pick-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <span>ถ่ายรูป</span>
+                <input type="file" class="hidden-file-input" accept="image/*" capture="environment" data-slot="extra">
+              </label>
+            </div>
+            <div class="slot-action-cell cell-right">
+              <label class="pick-btn btn-gallery">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <span>เลือกรูป / วิดีโอ</span>
+                <input type="file" class="hidden-file-input" accept="image/*,video/*" data-slot="extra">
+              </label>
+            </div>
+          </div>
+          <div class="preview-box" id="preview_extra">
+            <div class="preview-img-wrap" id="imgWrap_extra">
+              <img class="preview-img" id="img_extra" alt="ตัวอย่างรูปเพิ่มเติม">
+            </div>
+            <div class="video-badge-box" id="videoBox_extra"></div>
+            <div class="preview-meta" id="meta_extra"></div>
+            <div class="preview-tools-table">
+              <div class="preview-tool-cell cell-left" id="rotateCell_extra">
+                <button type="button" class="small-action-btn" data-rotate="extra">หมุนภาพ 90°</button>
+              </div>
+              <div class="preview-tool-cell cell-right" id="removeCell_extra">
+                <button type="button" class="small-action-btn btn-remove" data-remove="extra">ลบไฟล์นี้</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Readiness & Action Controls -->
+        <div id="readinessBar" class="readiness-bar">
+          กรุณากรอกข้อมูลที่มีเครื่องหมาย * ให้ครบก่อนส่ง
+        </div>
+
+        <button type="submit" id="submitBtn" class="primary-submit-btn">
+          ส่งข้อมูลและรูปภาพ
+        </button>
+
+        <button type="button" id="clearFormBtn" class="secondary-clear-btn">
+          ล้างแบบฟอร์ม
+        </button>
+      </form>
+    </div>
+
+    <!-- Success Receipt Screen -->
+    <div id="successScreen" class="success-screen">
+      <div class="success-banner">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12.5 11 15.5 16.5 9.5"></polyline></svg>
+        <h2>ส่งข้อมูลเรียบร้อยแล้ว</h2>
+        <p>ข้อมูลและรูปภาพของท่านถูกบันทึกเข้าระบบแล้ว</p>
+      </div>
+
+      <div id="telegramStatusBox" class="telegram-status-box">
+        แจ้งเตือนเจ้าหน้าที่เรียบร้อยแล้ว
+      </div>
+
+      <div class="card">
+        <div class="summary-row">
+          <span class="summary-label">ชื่อ-นามสกุลผู้ป่วย</span>
+          <span class="summary-value" id="receiptName">-</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">หลังกลับบ้าน</span>
+          <span class="summary-value" id="receiptDays">-</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">เวลาที่บันทึกข้อมูล</span>
+          <span class="summary-value" id="receiptTime">-</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">ลำดับแถวใน Google Sheet</span>
+          <span class="summary-value" id="receiptRow">-</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">ไฟล์ที่ส่งสำเร็จ</span>
+          <span class="summary-value" id="receiptFiles">-</span>
+        </div>
+      </div>
+
+      <button type="button" id="newSubmissionBtn" class="primary-submit-btn">
+        ส่งข้อมูลผู้ป่วยรายใหม่
+      </button>
+    </div>
+
+    <div class="footer-note">
+      ระบบส่งข้อมูลรูปบาดแผลหลังผ่าตัด • ใช้งานได้บนโทรศัพท์ทุกรุ่น
+    </div>
+  </div>
+
+  <!-- Confirmation Modal -->
+  <div id="confirmModal" class="overlay-backdrop" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+    <div class="modal-card">
+      <h2 id="confirmModalTitle" class="modal-title">ยืนยันการทำรายการ</h2>
+      <p id="confirmModalDesc" class="modal-text"></p>
+      <div class="modal-btn-stack">
+        <button type="button" id="confirmModalOkBtn" class="btn-modal-primary">ยืนยัน</button>
+        <button type="button" id="confirmModalCancelBtn" class="btn-modal-secondary">ยกเลิก</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Step-by-Step Progress Overlay -->
+  <div id="progressOverlay" class="overlay-backdrop" role="dialog" aria-modal="true" aria-labelledby="progressTitle">
+    <div class="modal-card">
+      <h2 id="progressTitle" class="modal-title">กำลังส่งข้อมูลและรูปภาพ...</h2>
+      <p class="modal-text">กรุณาเปิดหน้านี้ค้างไว้สักครู่ อย่าปิดแอปหรือเปลี่ยนหน้าจอจนกว่าจะเสร็จสมบูรณ์</p>
+
+      <div class="progress-track">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <div id="progressPercentText" class="progress-percent-text">0% — กำลังเริ่มต้น</div>
+
+      <ul class="step-list" aria-live="polite">
+        <li id="stepValidate" class="step-item">1. ตรวจสอบข้อมูลที่กรอก</li>
+        <li id="stepUpload" class="step-item">
+          <span id="stepUploadTitle">2. อัปโหลดไฟล์ไปยัง Google Drive</span>
+          <div id="fileProgressSublist" class="file-progress-sublist"></div>
+        </li>
+        <li id="stepSheet" class="step-item">3. บันทึกข้อมูลลง Google Sheet</li>
+        <li id="stepTelegram" class="step-item">4. ส่งแจ้งเตือนเจ้าหน้าที่ (Telegram)</li>
+      </ul>
+
+      <div id="progressErrorBox" class="progress-error-box"></div>
+
+      <div id="progressRetryActions" class="progress-retry-actions modal-btn-stack">
+        <button type="button" id="retryPendingBtn" class="btn-modal-primary">
+          ลองส่งเฉพาะส่วนที่ค้างอยู่อีกครั้ง
+        </button>
+        <button type="button" id="backToEditBtn" class="btn-modal-secondary">
+          กลับไปแก้ไขแบบฟอร์ม
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // ตั้งค่า URL ของ Google Apps Script Web App (/exec) ที่ได้จากการ Deploy
+      // =========================================================================
+      var CONFIG = {
+        GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbw6fjAdZxwMDspQdmJTIJSdhGG0dbOGIAOv-pFWygozLWNA3w-Gaj9Lb4XXkTEwxjFa/exec',
+        MAX_IMAGE_LONG_EDGE: 1600,
+        FALLBACK_IMAGE_LONG_EDGE: 1280,
+        IMAGE_QUALITY: 0.82,
+        IMAGE_RETRY_QUALITY: 0.72,
+        TARGET_IMAGE_BYTES: 700 * 1024,
+        SOFT_MAX_IMAGE_BYTES: 1200 * 1024,
+        KEEP_ORIG_JPEG_MAX_BYTES: 250 * 1024,
+        MAX_RAW_IMAGE_BYTES: 30 * 1024 * 1024,
+        MAX_UPLOAD_BYTES: 10 * 1024 * 1024,
+        PARALLEL_UPLOADS: 2,
+        UPLOAD_TIMEOUT_MS: 45000,
+        SUBMIT_TIMEOUT_MS: 60000,
+        MAX_RETRIES: 2,
+        DRAFT_KEY: 'wound_photo_form_draft_v1',
+        FONT_SIZE_KEY: 'wound_photo_form_fontsize_v1'
+      };
+
+      var SLOT_KEYS = ['chest', 'leftArm', 'rightLeg', 'leftLeg', 'extra'];
+      var SLOT_LABELS = {
+        chest: 'ภาพบาดแผลบริเวณ หน้าอก',
+        leftArm: 'ภาพบาดแผลบริเวณ แขนซ้าย',
+        rightLeg: 'ภาพบาดแผลบริเวณ ขาขวา',
+        leftLeg: 'ภาพบาดแผลบริเวณ ขาซ้าย',
+        extra: 'รูปเพิ่มเติม'
+      };
+
+      var state = {
+        slots: {
+          chest: null,
+          leftArm: null,
+          rightLeg: null,
+          leftLeg: null,
+          extra: null
+        },
+        submissionId: '',
+        isSubmitting: false,
+        pendingConfirmAction: null
+      };
+
+      // DOM References
+      var elFormScreen = document.getElementById('formScreen');
+      var elSuccessScreen = document.getElementById('successScreen');
+      var elOfflineBanner = document.getElementById('offlineBanner');
+      var elSetupBanner = document.getElementById('setupBanner');
+      var elToastRegion = document.getElementById('toastRegion');
+      var elWoundForm = document.getElementById('woundForm');
+
+      var elPatientNameInput = document.getElementById('patientNameInput');
+      var elCardPatientName = document.getElementById('cardPatientName');
+      var elErrPatientName = document.getElementById('errPatientName');
+
+      var elCardDays = document.getElementById('cardDays');
+      var elErrDays = document.getElementById('errDays');
+      var elOtherDayCard = document.getElementById('otherDayCard');
+      var elDaysOtherRadio = document.getElementById('daysOtherRadio');
+      var elDaysOtherInput = document.getElementById('daysOtherInput');
+
+      var elAttachedCountPill = document.getElementById('attachedCountPill');
+      var elReadinessBar = document.getElementById('readinessBar');
+      var elSubmitBtn = document.getElementById('submitBtn');
+      var elClearFormBtn = document.getElementById('clearFormBtn');
+
+      var elConfirmModal = document.getElementById('confirmModal');
+      var elConfirmModalTitle = document.getElementById('confirmModalTitle');
+      var elConfirmModalDesc = document.getElementById('confirmModalDesc');
+      var elConfirmModalOkBtn = document.getElementById('confirmModalOkBtn');
+      var elConfirmModalCancelBtn = document.getElementById('confirmModalCancelBtn');
+
+      var elProgressOverlay = document.getElementById('progressOverlay');
+      var elProgressTitle = document.getElementById('progressTitle');
+      var elProgressFill = document.getElementById('progressFill');
+      var elProgressPercentText = document.getElementById('progressPercentText');
+      var elStepValidate = document.getElementById('stepValidate');
+      var elStepUpload = document.getElementById('stepUpload');
+      var elStepUploadTitle = document.getElementById('stepUploadTitle');
+      var elFileProgressSublist = document.getElementById('fileProgressSublist');
+      var elStepSheet = document.getElementById('stepSheet');
+      var elStepTelegram = document.getElementById('stepTelegram');
+      var elProgressErrorBox = document.getElementById('progressErrorBox');
+      var elProgressRetryActions = document.getElementById('progressRetryActions');
+      var elRetryPendingBtn = document.getElementById('retryPendingBtn');
+      var elBackToEditBtn = document.getElementById('backToEditBtn');
+
+      var elNewSubmissionBtn = document.getElementById('newSubmissionBtn');
+
+      // =========================================================================
+      // Utility Helpers (Strict ES5)
+      // =========================================================================
+      function trimStr(str) {
+        if (str === null || str === undefined) {
+          return '';
+        }
+        return String(str).replace(/^\s+|\s+$/g, '');
+      }
+
+      function startsWithStr(str, prefix) {
+        if (!str || !prefix) {
+          return false;
+        }
+        return str.indexOf(prefix) === 0;
+      }
+
+      function addClass(el, cls) {
+        if (!el) {
+          return;
+        }
+        var current = el.className ? el.className.split(/\s+/) : [];
+        for (var i = 0; i < current.length; i++) {
+          if (current[i] === cls) {
+            return;
+          }
+        }
+        current.push(cls);
+        el.className = trimStr(current.join(' '));
+      }
+
+      function removeClass(el, cls) {
+        if (!el || !el.className) {
+          return;
+        }
+        var parts = el.className.split(/\s+/);
+        var kept = [];
+        for (var i = 0; i < parts.length; i++) {
+          if (parts[i] && parts[i] !== cls) {
+            kept.push(parts[i]);
+          }
+        }
+        el.className = kept.join(' ');
+      }
+
+      function formatBytes(bytes) {
+        if (!bytes || bytes < 1024) {
+          return (bytes || 0) + ' B';
+        }
+        if (bytes < 1024 * 1024) {
+          return Math.round(bytes / 1024) + ' KB';
+        }
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+      }
+
+      function estimateBase64Bytes(dataUrl) {
+        var commaIdx = dataUrl.indexOf(',');
+        var b64 = commaIdx >= 0 ? dataUrl.substring(commaIdx + 1) : dataUrl;
+        var padding = 0;
+        if (b64.length >= 2 && b64.charAt(b64.length - 1) === '=') {
+          padding++;
+          if (b64.charAt(b64.length - 2) === '=') {
+            padding++;
+          }
+        }
+        return Math.max(0, Math.floor((b64.length * 3) / 4) - padding);
+      }
+
+      function generateSubmissionId() {
+        var nowPart = String(new Date().getTime());
+        var randPart = String(Math.floor(Math.random() * 1000000));
+        return 'sub_' + nowPart + '_' + randPart;
+      }
+
+      function invalidateSubmissionId() {
+        state.submissionId = '';
+      }
+
+      function showToast(message, type) {
+        var item = document.createElement('div');
+        var typeCls = 'toast-item';
+        if (type === 'success') {
+          typeCls += ' toast-success';
+        } else if (type === 'warning') {
+          typeCls += ' toast-warning';
+        } else if (type === 'error') {
+          typeCls += ' toast-error';
+        }
+        item.className = typeCls;
+        item.appendChild(document.createTextNode(message));
+
+        while (elToastRegion.childNodes.length >= 3) {
+          elToastRegion.removeChild(elToastRegion.firstChild);
+        }
+        elToastRegion.appendChild(item);
+
+        window.setTimeout(function () {
+          if (item.parentNode === elToastRegion) {
+            elToastRegion.removeChild(item);
+          }
+        }, 3800);
+      }
+
+      function storageGet(key) {
+        try {
+          return window.localStorage.getItem(key);
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function storageSet(key, val) {
+        try {
+          window.localStorage.setItem(key, val);
+        } catch (err) {}
+      }
+
+      function storageRemove(key) {
+        try {
+          window.localStorage.removeItem(key);
+        } catch (err) {}
+      }
+
+      // =========================================================================
+      // Font Size Switcher & Connectivity Banner
+      // =========================================================================
+      function applyFontSize(clsName, notifyUser) {
+        var allowed = {
+          'font-normal': 'ปกติ',
+          'font-large': 'ใหญ่',
+          'font-xlarge': 'ใหญ่มาก'
+        };
+        if (!allowed[clsName]) {
+          clsName = 'font-normal';
+        }
+        document.body.className = clsName;
+
+        var btns = document.querySelectorAll('.font-btn');
+        for (var i = 0; i < btns.length; i++) {
+          var b = btns[i];
+          if (b.getAttribute('data-font') === clsName) {
+            addClass(b, 'active');
+          } else {
+            removeClass(b, 'active');
+          }
+        }
+
+        storageSet(CONFIG.FONT_SIZE_KEY, clsName);
+        if (notifyUser) {
+          showToast('ปรับขนาดตัวอักษรเป็น "' + allowed[clsName] + '" แล้ว', 'info');
+        }
+      }
+
+      function updateNetworkBanner(notifyOnChange) {
+        var isOffline = (typeof navigator.onLine === 'boolean') && !navigator.onLine;
+        if (isOffline) {
+          addClass(elOfflineBanner, 'banner-visible');
+          if (notifyOnChange) {
+            showToast('ขาดการเชื่อมต่ออินเทอร์เน็ต กรุณาตรวจสอบสัญญาณ', 'error');
+          }
+        } else {
+          removeClass(elOfflineBanner, 'banner-visible');
+          if (notifyOnChange) {
+            showToast('เชื่อมต่ออินเทอร์เน็ตกลับมาเป็นปกติแล้ว', 'success');
+          }
+        }
+      }
+
+      function checkSetupPlaceholder() {
+        var url = trimStr(CONFIG.GAS_WEB_APP_URL);
+        if (!url || url === 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL') {
+          addClass(elSetupBanner, 'banner-visible');
+          return false;
+        }
+        removeClass(elSetupBanner, 'banner-visible');
+        return true;
+      }
+
+      // =========================================================================
+      // Form Field Logic, Draft Persistence & Readiness
+      // =========================================================================
+      function getSelectedDaysRadioValue() {
+        var radios = document.getElementsByName('daysChoice');
+        for (var i = 0; i < radios.length; i++) {
+          if (radios[i].checked) {
+            return radios[i].value;
+          }
+        }
+        return '';
+      }
+
+      function getDaysAfterDischargeValue() {
+        var choice = getSelectedDaysRadioValue();
+        if (!choice) {
+          return '';
+        }
+        if (choice === '__OTHER__') {
+          return trimStr(elDaysOtherInput.value);
+        }
+        return choice;
+      }
+
+      function syncRadioCardStyles() {
+        var selected = getSelectedDaysRadioValue();
+        var cards = document.querySelectorAll('[data-radio-card]');
+        for (var i = 0; i < cards.length; i++) {
+          var card = cards[i];
+          if (card.getAttribute('data-radio-card') === selected) {
+            addClass(card, 'selected');
+          } else {
+            removeClass(card, 'selected');
+          }
+        }
+        if (selected === '__OTHER__') {
+          addClass(elOtherDayCard, 'selected');
+        } else {
+          removeClass(elOtherDayCard, 'selected');
+        }
+      }
+
+      function countAttachedFiles() {
+        var count = 0;
+        for (var i = 0; i < SLOT_KEYS.length; i++) {
+          if (state.slots[SLOT_KEYS[i]]) {
+            count++;
+          }
+        }
+        return count;
+      }
+
+      function updateReadinessUI() {
+        var attached = countAttachedFiles();
+        elAttachedCountPill.innerHTML = '';
+        elAttachedCountPill.appendChild(document.createTextNode('แนบไฟล์แล้ว ' + attached + '/5 ช่อง'));
+
+        var nameVal = trimStr(elPatientNameInput.value);
+        var daysChoice = getSelectedDaysRadioValue();
+        var daysVal = getDaysAfterDischargeValue();
+
+        var isReady = Boolean(nameVal && daysChoice && daysVal);
+        elReadinessBar.innerHTML = '';
+        if (isReady) {
+          addClass(elReadinessBar, 'ready');
+          var msg = attached > 0
+            ? 'ข้อมูลครบถ้วน พร้อมส่ง (แนบไฟล์แล้ว ' + attached + ' ช่อง)'
+            : 'ข้อมูลครบถ้วน พร้อมส่ง (ยังไม่ได้แนบไฟล์รูปภาพ)';
+          elReadinessBar.appendChild(document.createTextNode(msg));
+        } else {
+          removeClass(elReadinessBar, 'ready');
+          elReadinessBar.appendChild(document.createTextNode('กรุณากรอกข้อมูลที่มีเครื่องหมาย * ให้ครบก่อนส่ง'));
+        }
+      }
+
+      function saveDraft() {
+        var payload = {
+          patientName: elPatientNameInput.value || '',
+          daysChoice: getSelectedDaysRadioValue(),
+          daysOther: elDaysOtherInput.value || ''
+        };
+        storageSet(CONFIG.DRAFT_KEY, JSON.stringify(payload));
+      }
+
+      function restoreDraft() {
+        var raw = storageGet(CONFIG.DRAFT_KEY);
+        if (!raw) {
+          return;
+        }
+        try {
+          var draft = JSON.parse(raw);
+          var restoredSomething = false;
+          if (draft.patientName) {
+            elPatientNameInput.value = draft.patientName;
+            restoredSomething = true;
+          }
+          if (draft.daysChoice) {
+            var radios = document.getElementsByName('daysChoice');
+            for (var i = 0; i < radios.length; i++) {
+              if (radios[i].value === draft.daysChoice) {
+                radios[i].checked = true;
+                restoredSomething = true;
+              }
+            }
+          }
+          if (draft.daysOther) {
+            elDaysOtherInput.value = draft.daysOther;
+            restoredSomething = true;
+          }
+          syncRadioCardStyles();
+          updateReadinessUI();
+          if (restoredSomething) {
+            showToast('กู้คืนข้อมูลที่กรอกค้างไว้เรียบร้อย', 'info');
+          }
+        } catch (err) {}
+      }
+
+      function clearValidationStates() {
+        removeClass(elCardPatientName, 'card-invalid');
+        removeClass(elErrPatientName, 'visible');
+        removeClass(elCardDays, 'card-invalid');
+        removeClass(elErrDays, 'visible');
+      }
+
+      function validateFormFields() {
+        clearValidationStates();
+        var firstBadCard = null;
+        var missingList = [];
+
+        var nameVal = trimStr(elPatientNameInput.value);
+        if (!nameVal) {
+          addClass(elCardPatientName, 'card-invalid');
+          addClass(elErrPatientName, 'visible');
+          missingList.push('ชื่อ-นามสกุลผู้ป่วย');
+          firstBadCard = elCardPatientName;
+        }
+
+        var choice = getSelectedDaysRadioValue();
+        var otherVal = trimStr(elDaysOtherInput.value);
+        if (!choice) {
+          addClass(elCardDays, 'card-invalid');
+          elErrDays.innerHTML = '';
+          elErrDays.appendChild(document.createTextNode('กรุณาเลือกจำนวนวันหลังกลับบ้าน'));
+          addClass(elErrDays, 'visible');
+          missingList.push('หลังกลับบ้าน');
+          if (!firstBadCard) {
+            firstBadCard = elCardDays;
+          }
+        } else if (choice === '__OTHER__' && !otherVal) {
+          addClass(elCardDays, 'card-invalid');
+          elErrDays.innerHTML = '';
+          elErrDays.appendChild(document.createTextNode('กรุณาระบุจำนวนวันในช่อง "อื่นๆ" เช่น 10 วัน'));
+          addClass(elErrDays, 'visible');
+          missingList.push('จำนวนวันหลังกลับบ้าน (ช่องอื่นๆ)');
+          if (!firstBadCard) {
+            firstBadCard = elCardDays;
+          }
+        }
+
+        if (firstBadCard) {
+          try {
+            firstBadCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } catch (scrollErr) {
+            firstBadCard.scrollIntoView();
+          }
+          showToast('กรุณากรอกข้อมูลให้ครบ: ' + missingList.join(', '), 'error');
+          return false;
+        }
+
+        return true;
+      }
+
+      // =========================================================================
+      // File Selection, Fast Client-Side Image Compression & Rotation
+      // =========================================================================
+      function handleFilePicked(slotKey, file) {
+        if (!file) {
+          return;
+        }
+
+        var rawType = (file.type || '').toLowerCase();
+        var isVideo = startsWithStr(rawType, 'video/');
+        var isImage = startsWithStr(rawType, 'image/');
+
+        // บางโทรศัพท์เก่าอาจไม่ส่ง MIME type สำหรับไฟล์ภาพ/วิดีโอจากกล้อง
+        if (!rawType && file.name) {
+          if (/\.(mp4|mov|webm|3gp|avi|m4v)$/i.test(file.name)) {
+            isVideo = true;
+            rawType = 'video/mp4';
+          } else {
+            isImage = true;
+            rawType = 'image/jpeg';
+          }
+        }
+
+        if (slotKey !== 'extra' && !isImage) {
+          showToast('ช่อง "' + SLOT_LABELS[slotKey] + '" รองรับเฉพาะไฟล์รูปภาพเท่านั้น', 'error');
+          return;
+        }
+
+        if (slotKey === 'extra' && !isImage && !isVideo) {
+          showToast('ช่อง "รูปเพิ่มเติม" รองรับเฉพาะไฟล์รูปภาพหรือวิดีโอเท่านั้น', 'error');
+          return;
+        }
+
+        if (isVideo) {
+          if (file.size > CONFIG.MAX_UPLOAD_BYTES) {
+            showToast('วิดีโอมีขนาด ' + formatBytes(file.size) + ' เกินกำหนด 10 MB กรุณาเลือกไฟล์ที่สั้นลง', 'error');
+            return;
+          }
+          invalidateSubmissionId();
+          state.slots[slotKey] = {
+            kind: 'video',
+            file: file,
+            mimeType: rawType || 'video/mp4',
+            fileName: file.name || 'video.mp4',
+            originalSize: file.size,
+            finalSize: file.size,
+            dataUrl: '',
+            uploadedUrl: ''
+          };
+          renderSlotPreview(slotKey);
+          updateReadinessUI();
+          showToast('เตรียมวิดีโอ "' + SLOT_LABELS[slotKey] + '" พร้อมส่งแล้ว (' + formatBytes(file.size) + ')', 'success');
+          return;
+        }
+
+        if (file.size > CONFIG.MAX_RAW_IMAGE_BYTES) {
+          showToast('ไฟล์รูปภาพมีขนาดใหญ่เกิน 30 MB กรุณาเลือกรูปภาพใหม่', 'error');
+          return;
+        }
+
+        compressImageFile(file, rawType, function (err, result) {
+          if (err) {
+            showToast(err, 'error');
+            return;
+          }
+          invalidateSubmissionId();
+          state.slots[slotKey] = {
+            kind: 'image',
+            file: null,
+            mimeType: result.mimeType,
+            fileName: file.name || 'wound.jpg',
+            originalSize: file.size,
+            finalSize: result.finalSize,
+            dataUrl: result.dataUrl,
+            uploadedUrl: '',
+            wasFallbackRaw: Boolean(result.wasFallbackRaw)
+          };
+          renderSlotPreview(slotKey);
+          updateReadinessUI();
+
+          if (result.wasFallbackRaw) {
+            showToast('ไม่สามารถย่อรูปชนิดนี้ได้ ระบบจะส่งไฟล์ต้นฉบับ (' + formatBytes(result.finalSize) + ')', 'warning');
+          } else {
+            showToast('ย่อรูป "' + SLOT_LABELS[slotKey] + '" สำเร็จ (' + formatBytes(file.size) + ' → ' + formatBytes(result.finalSize) + ')', 'success');
+          }
+        });
+      }
+
+      function readRawFileAsDataUrl(file, callback) {
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+          callback(null, ev.target.result);
+        };
+        reader.onerror = function () {
+          callback('ไม่สามารถอ่านไฟล์จากเครื่องได้ กรุณาลองใหม่อีกครั้ง');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function compressImageFile(file, rawType, callback) {
+        var urlApi = window.URL || window.webkitURL;
+        var objectUrl = '';
+        var img = new Image();
+
+        function fallbackRawOrFail() {
+          if (file.size <= CONFIG.MAX_UPLOAD_BYTES) {
+            readRawFileAsDataUrl(file, function (readErr, dataUrl) {
+              if (readErr) {
+                callback(readErr);
+                return;
+              }
+              callback(null, {
+                dataUrl: dataUrl,
+                mimeType: rawType || 'image/jpeg',
+                finalSize: file.size,
+                wasFallbackRaw: true
+              });
+            });
+          } else {
+            callback('รูปภาพมีขนาดเกิน 10 MB และโทรศัพท์ไม่สามารถย่อขนาดรูปชนิดนี้ได้ กรุณาถ่ายใหม่');
+          }
+        }
+
+        img.onload = function () {
+          if (objectUrl && urlApi && urlApi.revokeObjectURL) {
+            try {
+              urlApi.revokeObjectURL(objectUrl);
+            } catch (ignoreRevoke) {}
+          }
+
+          var origW = img.naturalWidth || img.width || 0;
+          var origH = img.naturalHeight || img.height || 0;
+          if (!origW || !origH) {
+            fallbackRawOrFail();
+            return;
+          }
+
+          var maxDim = Math.max(origW, origH);
+
+          // หากเป็น JPEG ขนาดเล็กอยู่แล้ว (<= 250 KB และด้านยาว <= 1600px) อ่านตรงเพื่อความรวดเร็ว
+          if (rawType === 'image/jpeg' && file.size <= CONFIG.KEEP_ORIG_JPEG_MAX_BYTES && maxDim <= CONFIG.MAX_IMAGE_LONG_EDGE) {
+            readRawFileAsDataUrl(file, function (readErr, dataUrl) {
+              if (readErr) {
+                callback(readErr);
+                return;
+              }
+              callback(null, {
+                dataUrl: dataUrl,
+                mimeType: 'image/jpeg',
+                finalSize: file.size,
+                wasFallbackRaw: false
+              });
+            });
+            return;
+          }
+
+          try {
+            var encoded = renderScaledJpeg(img, origW, origH, CONFIG.MAX_IMAGE_LONG_EDGE, CONFIG.IMAGE_QUALITY);
+            var byteSize = estimateBase64Bytes(encoded);
+
+            if (byteSize > CONFIG.TARGET_IMAGE_BYTES) {
+              encoded = renderScaledJpeg(img, origW, origH, CONFIG.MAX_IMAGE_LONG_EDGE, CONFIG.IMAGE_RETRY_QUALITY);
+              byteSize = estimateBase64Bytes(encoded);
+            }
+
+            if (byteSize > CONFIG.SOFT_MAX_IMAGE_BYTES) {
+              encoded = renderScaledJpeg(img, origW, origH, CONFIG.FALLBACK_IMAGE_LONG_EDGE, CONFIG.IMAGE_RETRY_QUALITY);
+              byteSize = estimateBase64Bytes(encoded);
+            }
+
+            if (byteSize > CONFIG.MAX_UPLOAD_BYTES) {
+              callback('รูปภาพหลังย่อขนาดยังคงใหญ่เกิน 10 MB กรุณาถ่ายรูปใหม่อีกครั้ง');
+              return;
+            }
+
+            callback(null, {
+              dataUrl: encoded,
+              mimeType: 'image/jpeg',
+              finalSize: byteSize,
+              wasFallbackRaw: false
+            });
+          } catch (canvasErr) {
+            fallbackRawOrFail();
+          }
+        };
+
+        img.onerror = function () {
+          if (objectUrl && urlApi && urlApi.revokeObjectURL) {
+            try {
+              urlApi.revokeObjectURL(objectUrl);
+            } catch (ignoreRevoke2) {}
+          }
+          fallbackRawOrFail();
+        };
+
+        if (urlApi && typeof urlApi.createObjectURL === 'function') {
+          try {
+            objectUrl = urlApi.createObjectURL(file);
+            img.src = objectUrl;
+            return;
+          } catch (ignoreObjUrl) {}
+        }
+
+        readRawFileAsDataUrl(file, function (readErr, dataUrl) {
+          if (readErr) {
+            callback(readErr);
+            return;
+          }
+          img.src = dataUrl;
+        });
+      }
+
+      function renderScaledJpeg(img, origW, origH, maxLongEdge, quality) {
+        var scale = 1;
+        var longest = Math.max(origW, origH);
+        if (longest > maxLongEdge) {
+          scale = maxLongEdge / longest;
+        }
+        var targetW = Math.max(1, Math.round(origW * scale));
+        var targetH = Math.max(1, Math.round(origH * scale));
+
+        var canvas = document.createElement('canvas');
+        canvas.width = targetW;
+        canvas.height = targetH;
+
+        var ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, targetW, targetH);
+        ctx.drawImage(img, 0, 0, targetW, targetH);
+
+        var dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+        // คืนหน่วยความจำ Canvas ทันทีสำหรับ iOS / Android RAM ต่ำ
+        canvas.width = 1;
+        canvas.height = 1;
+        return dataUrl;
+      }
+
+      function rotateSlotImage(slotKey) {
+        var slot = state.slots[slotKey];
+        if (!slot || slot.kind !== 'image' || !slot.dataUrl) {
+          return;
+        }
+
+        var img = new Image();
+        img.onload = function () {
+          try {
+            var w = img.naturalWidth || img.width;
+            var h = img.naturalHeight || img.height;
+            var canvas = document.createElement('canvas');
+            canvas.width = h;
+            canvas.height = w;
+
+            var ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(Math.PI / 2);
+            ctx.drawImage(img, -w / 2, -h / 2);
+
+            var rotatedUrl = canvas.toDataURL('image/jpeg', CONFIG.IMAGE_QUALITY);
+            canvas.width = 1;
+            canvas.height = 1;
+
+            invalidateSubmissionId();
+            slot.dataUrl = rotatedUrl;
+            slot.mimeType = 'image/jpeg';
+            slot.finalSize = estimateBase64Bytes(rotatedUrl);
+            slot.uploadedUrl = '';
+
+            renderSlotPreview(slotKey);
+            showToast('หมุนภาพ "' + SLOT_LABELS[slotKey] + '" 90° เรียบร้อย', 'info');
+          } catch (err) {
+            showToast('ไม่สามารถหมุนภาพนี้ได้บนอุปกรณ์ของท่าน', 'error');
+          }
+        };
+        img.onerror = function () {
+          showToast('ไม่สามารถโหลดภาพเพื่อหมุนได้', 'error');
+        };
+        img.src = slot.dataUrl;
+      }
+
+      function removeSlotFile(slotKey) {
+        if (!state.slots[slotKey]) {
+          return;
+        }
+        invalidateSubmissionId();
+        state.slots[slotKey] = null;
+        renderSlotPreview(slotKey);
+        updateReadinessUI();
+        showToast('ลบไฟล์ออกจาก "' + SLOT_LABELS[slotKey] + '" แล้ว', 'info');
+      }
+
+      function renderSlotPreview(slotKey) {
+        var slot = state.slots[slotKey];
+        var box = document.getElementById('preview_' + slotKey);
+        var imgWrap = document.getElementById('imgWrap_' + slotKey);
+        var imgEl = document.getElementById('img_' + slotKey);
+        var metaEl = document.getElementById('meta_' + slotKey);
+        var videoBox = document.getElementById('videoBox_' + slotKey);
+
+        if (!slot) {
+          removeClass(box, 'visible');
+          imgEl.removeAttribute('src');
+          metaEl.innerHTML = '';
+          if (videoBox) {
+            removeClass(videoBox, 'visible');
+            videoBox.innerHTML = '';
+          }
+          return;
+        }
+
+        addClass(box, 'visible');
+
+        if (slot.kind === 'video') {
+          imgWrap.style.display = 'none';
+          imgEl.removeAttribute('src');
+          if (videoBox) {
+            addClass(videoBox, 'visible');
+            videoBox.innerHTML = '';
+            videoBox.appendChild(document.createTextNode('ไฟล์วิดีโอ: ' + slot.fileName + ' (' + formatBytes(slot.finalSize) + ')'));
+          }
+          if (slotKey === 'extra') {
+            document.getElementById('rotateCell_extra').style.display = 'none';
+            document.getElementById('removeCell_extra').className = 'preview-tool-cell full-cell';
+          }
+        } else {
+          imgWrap.style.display = 'block';
+          imgEl.src = slot.dataUrl;
+          if (videoBox) {
+            removeClass(videoBox, 'visible');
+          }
+          if (slotKey === 'extra') {
+            document.getElementById('rotateCell_extra').style.display = 'table-cell';
+            document.getElementById('removeCell_extra').className = 'preview-tool-cell cell-right';
+          }
+        }
+
+        metaEl.innerHTML = '';
+        removeClass(metaEl, 'meta-uploaded');
+        removeClass(metaEl, 'meta-pending');
+
+        var statusText;
+        if (slot.uploadedUrl) {
+          addClass(metaEl, 'meta-uploaded');
+          statusText = 'อัปโหลดขึ้น Google Drive แล้ว ✓ (' + formatBytes(slot.finalSize) + ')';
+        } else if (slot.kind === 'video') {
+          statusText = 'วิดีโอพร้อมส่ง • ' + formatBytes(slot.finalSize);
+        } else if (slot.originalSize && slot.originalSize !== slot.finalSize) {
+          statusText = 'พร้อมส่ง • ' + formatBytes(slot.originalSize) + ' → ' + formatBytes(slot.finalSize);
+        } else {
+          statusText = 'พร้อมส่ง • ' + formatBytes(slot.finalSize);
+        }
+        metaEl.appendChild(document.createTextNode(statusText));
+      }
+
+      // =========================================================================
+      // In-Page Accessible Confirmation Modals
+      // =========================================================================
+      function openConfirmModal(title, desc, okText, isDanger, onConfirm) {
+        elConfirmModalTitle.innerHTML = '';
+        elConfirmModalTitle.appendChild(document.createTextNode(title));
+        elConfirmModalDesc.innerHTML = '';
+        elConfirmModalDesc.appendChild(document.createTextNode(desc));
+
+        elConfirmModalOkBtn.innerHTML = '';
+        elConfirmModalOkBtn.appendChild(document.createTextNode(okText));
+        elConfirmModalOkBtn.className = isDanger ? 'btn-modal-danger' : 'btn-modal-primary';
+
+        state.pendingConfirmAction = onConfirm;
+        addClass(elConfirmModal, 'visible');
+      }
+
+      function closeConfirmModal() {
+        removeClass(elConfirmModal, 'visible');
+        state.pendingConfirmAction = null;
+      }
+
+      function resetAllFormFields(silent) {
+        elPatientNameInput.value = '';
+        var radios = document.getElementsByName('daysChoice');
+        for (var i = 0; i < radios.length; i++) {
+          radios[i].checked = false;
+        }
+        elDaysOtherInput.value = '';
+        syncRadioCardStyles();
+        clearValidationStates();
+
+        for (var k = 0; k < SLOT_KEYS.length; k++) {
+          state.slots[SLOT_KEYS[k]] = null;
+          renderSlotPreview(SLOT_KEYS[k]);
+        }
+
+        invalidateSubmissionId();
+        storageRemove(CONFIG.DRAFT_KEY);
+        updateReadinessUI();
+
+        if (!silent) {
+          showToast('ล้างข้อมูลแบบฟอร์มเรียบร้อยแล้ว', 'info');
+        }
+      }
+
+      // =========================================================================
+      // Network Layer (Strict XHR without xhr.upload listeners -> No CORS Preflight)
+      // =========================================================================
+      function sendGasRequest(payload, timeoutMs, callback) {
+        var url = trimStr(CONFIG.GAS_WEB_APP_URL);
+        var xhr = new XMLHttpRequest();
+        var done = false;
+
+        function finish(errObj, dataObj) {
+          if (done) {
+            return;
+          }
+          done = true;
+          callback(errObj, dataObj);
+        }
+
+        try {
+          xhr.open('POST', url, true);
+          xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+          xhr.timeout = timeoutMs;
+        } catch (openErr) {
+          finish({ message: 'ไม่สามารถสร้างการเชื่อมต่อเครือข่ายได้', retryable: true }, null);
+          return;
+        }
+
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState !== 4) {
+            return;
+          }
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              var parsed = JSON.parse(xhr.responseText);
+              if (!parsed || parsed.ok === false) {
+                finish({
+                  message: (parsed && parsed.error) ? parsed.error : 'เซิร์ฟเวอร์แจ้งข้อผิดพลาด',
+                  retryable: parsed && parsed.retryable !== undefined ? Boolean(parsed.retryable) : true
+                }, null);
+              } else {
+                finish(null, parsed);
+              }
+            } catch (parseErr) {
+              finish({
+                message: 'รูปแบบการตอบกลับจากเซิร์ฟเวอร์ไม่ถูกต้อง (โปรดตรวจสอบสิทธิ์ Web App เป็น Anyone)',
+                retryable: true
+              }, null);
+            }
+          } else {
+            finish({
+              message: xhr.status === 0
+                ? 'การเชื่อมต่อขาดหายระหว่างส่งข้อมูล กรุณาตรวจสอบอินเทอร์เน็ต'
+                : 'เซิร์ฟเวอร์ตอบกลับสถานะ HTTP ' + xhr.status,
+              retryable: true
+            }, null);
+          }
+        };
+
+        xhr.ontimeout = function () {
+          finish({ message: 'การส่งข้อมูลใช้เวลานานเกินกำหนด (Timeout)', retryable: true }, null);
+        };
+
+        xhr.onerror = function () {
+          finish({ message: 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบสัญญาณ', retryable: true }, null);
+        };
+
+        try {
+          xhr.send(JSON.stringify(payload));
+        } catch (sendErr) {
+          finish({ message: 'เกิดข้อผิดพลาดขณะส่งข้อมูล', retryable: true }, null);
+        }
+      }
+
+      // =========================================================================
+      // Step-by-Step Progress Overlay & Concurrent Upload + Smart Retry
+      // =========================================================================
+      function setProgressBar(percent, labelText) {
+        var clamped = Math.max(0, Math.min(100, Math.round(percent)));
+        elProgressFill.style.width = clamped + '%';
+        elProgressPercentText.innerHTML = '';
+        elProgressPercentText.appendChild(document.createTextNode(clamped + '% — ' + labelText));
+      }
+
+      function setStepState(el, statusCls, textOverride) {
+        removeClass(el, 'step-active');
+        removeClass(el, 'step-done');
+        removeClass(el, 'step-warn');
+        removeClass(el, 'step-error');
+        if (statusCls) {
+          addClass(el, statusCls);
+        }
+        if (textOverride !== undefined && textOverride !== null) {
+          el.innerHTML = '';
+          el.appendChild(document.createTextNode(textOverride));
+        }
+      }
+
+      function setUploadSubItemStatus(slotKey, text, colorHex) {
+        var el = document.getElementById('substatus_' + slotKey);
+        if (!el) {
+          return;
+        }
+        el.innerHTML = '';
+        el.style.color = colorHex || '#334155';
+        el.appendChild(document.createTextNode(SLOT_LABELS[slotKey] + ': ' + text));
+      }
+
+      function prepareSlotPayloadData(slot, callback) {
+        if (slot.kind === 'video' && !slot.dataUrl && slot.file) {
+          readRawFileAsDataUrl(slot.file, function (err, dataUrl) {
+            if (err) {
+              callback(err);
+              return;
+            }
+            callback(null, dataUrl);
+          });
+          return;
+        }
+        callback(null, slot.dataUrl);
+      }
+
+      function uploadSingleSlotWithRetry(slotKey, patientName, daysText, onDone) {
+        var slot = state.slots[slotKey];
+        if (!slot || slot.uploadedUrl) {
+          setUploadSubItemStatus(slotKey, 'ส่งสำเร็จ ✓', '#166534');
+          onDone(null);
+          return;
+        }
+
+        var attempt = 0;
+
+        function attemptUpload(dataUrl) {
+          attempt++;
+          if (attempt === 1) {
+            setUploadSubItemStatus(slotKey, 'กำลังส่ง...', '#0B4A4A');
+          } else {
+            setUploadSubItemStatus(slotKey, 'กำลังลองส่งใหม่ (ครั้งที่ ' + attempt + ')...', '#92400E');
+          }
+
+          var payload = {
+            action: 'upload_file',
+            fieldKey: slotKey,
+            mimeType: slot.mimeType,
+            fileName: slot.fileName,
+            patientName: patientName,
+            daysAfterDischarge: daysText,
+            base64Data: dataUrl
+          };
+
+          sendGasRequest(payload, CONFIG.UPLOAD_TIMEOUT_MS, function (err, res) {
+            if (!err && res && res.fileUrl) {
+              slot.uploadedUrl = res.fileUrl;
+              renderSlotPreview(slotKey);
+              setUploadSubItemStatus(slotKey, 'ส่งสำเร็จ ✓', '#166534');
+              onDone(null);
+              return;
+            }
+
+            var canRetry = err && err.retryable && attempt <= CONFIG.MAX_RETRIES;
+            if (canRetry) {
+              var backoffMs = 1200 + Math.floor(Math.random() * 1300);
+              window.setTimeout(function () {
+                attemptUpload(dataUrl);
+              }, backoffMs);
+            } else {
+              var errMsg = (err && err.message) ? err.message : 'อัปโหลดไม่สำเร็จ';
+              setUploadSubItemStatus(slotKey, 'ไม่สำเร็จ (' + errMsg + ')', '#991B1B');
+              onDone(errMsg);
+            }
+          });
+        }
+
+        setUploadSubItemStatus(slotKey, 'กำลังเตรียมไฟล์...', '#0B4A4A');
+        prepareSlotPayloadData(slot, function (prepErr, dataUrl) {
+          if (prepErr) {
+            setUploadSubItemStatus(slotKey, 'ไม่สำเร็จ (' + prepErr + ')', '#991B1B');
+            onDone(prepErr);
+            return;
+          }
+          attemptUpload(dataUrl);
+        });
+      }
+
+      function uploadPendingSlotsParallel(pendingKeys, patientName, daysText, onProgress, onAllFinished) {
+        if (pendingKeys.length === 0) {
+          onAllFinished(0, []);
+          return;
+        }
+
+        var nextIndex = 0;
+        var activeCount = 0;
+        var completedCount = 0;
+        var errors = [];
+
+        function launchNext() {
+          if (completedCount === pendingKeys.length) {
+            onAllFinished(errors.length, errors);
+            return;
+          }
+
+          while (activeCount < CONFIG.PARALLEL_UPLOADS && nextIndex < pendingKeys.length) {
+            (function (key) {
+              activeCount++;
+              uploadSingleSlotWithRetry(key, patientName, daysText, function (errMsg) {
+                activeCount--;
+                completedCount++;
+                if (errMsg) {
+                  errors.push(SLOT_LABELS[key] + ': ' + errMsg);
+                }
+                onProgress(completedCount, pendingKeys.length);
+                launchNext();
+              });
+            })(pendingKeys[nextIndex]);
+            nextIndex++;
+          }
+        }
+
+        launchNext();
+      }
+
+      function submitRecordWithRetry(recordPayload, onDone) {
+        var attempt = 0;
+
+        function attemptRecord() {
+          attempt++;
+          if (attempt === 1) {
+            setStepState(elStepSheet, 'step-active', '3. กำลังบันทึกข้อมูลลง Google Sheet...');
+          } else {
+            setStepState(elStepSheet, 'step-active', '3. กำลังลองบันทึกข้อมูลใหม่อีกครั้ง (ครั้งที่ ' + attempt + ')...');
+          }
+
+          sendGasRequest(recordPayload, CONFIG.SUBMIT_TIMEOUT_MS, function (err, res) {
+            if (!err && res && res.ok) {
+              onDone(null, res);
+              return;
+            }
+            var canRetry = err && err.retryable && attempt <= CONFIG.MAX_RETRIES;
+            if (canRetry) {
+              var backoffMs = 1200 + Math.floor(Math.random() * 1300);
+              window.setTimeout(attemptRecord, backoffMs);
+            } else {
+              onDone(err || { message: 'บันทึกข้อมูลลง Google Sheet ไม่สำเร็จ' }, null);
+            }
+          });
+        }
+
+        attemptRecord();
+      }
+
+      function startSubmissionFlow() {
+        if (state.isSubmitting) {
+          return;
+        }
+
+        if (!checkSetupPlaceholder()) {
+          showToast('กรุณาตั้งค่า GAS_WEB_APP_URL ในไฟล์ index.html ก่อนใช้งาน', 'error');
+          return;
+        }
+
+        if (typeof navigator.onLine === 'boolean' && !navigator.onLine) {
+          updateNetworkBanner(true);
+          return;
+        }
+
+        if (!state.submissionId) {
+          state.submissionId = generateSubmissionId();
+        }
+
+        state.isSubmitting = true;
+        elSubmitBtn.disabled = true;
+
+        var patientName = trimStr(elPatientNameInput.value);
+        var daysText = getDaysAfterDischargeValue();
+
+        // Reset progress overlay state
+        elProgressTitle.innerHTML = '';
+        elProgressTitle.appendChild(document.createTextNode('กำลังส่งข้อมูลและรูปภาพ...'));
+        removeClass(elProgressErrorBox, 'visible');
+        removeClass(elProgressRetryActions, 'visible');
+        addClass(elProgressOverlay, 'visible');
+
+        setProgressBar(10, 'ตรวจสอบข้อมูลเรียบร้อย');
+        setStepState(elStepValidate, 'step-done', '1. ตรวจสอบข้อมูลที่กรอก — เรียบร้อย ✓');
+
+        // Build file sub-list
+        var attachedKeys = [];
+        var pendingKeys = [];
+        elFileProgressSublist.innerHTML = '';
+
+        for (var i = 0; i < SLOT_KEYS.length; i++) {
+          var key = SLOT_KEYS[i];
+          var slot = state.slots[key];
+          if (slot) {
+            attachedKeys.push(key);
+            var subDiv = document.createElement('div');
+            subDiv.id = 'substatus_' + key;
+            subDiv.className = 'file-subitem';
+            elFileProgressSublist.appendChild(subDiv);
+            if (slot.uploadedUrl) {
+              setUploadSubItemStatus(key, 'ส่งสำเร็จ ✓ (ข้ามไฟล์ที่ส่งแล้ว)', '#166534');
+            } else {
+              pendingKeys.push(key);
+              setUploadSubItemStatus(key, 'รอส่ง...', '#334155');
+            }
+          }
+        }
+
+        if (attachedKeys.length === 0) {
+          elStepUploadTitle.innerHTML = '';
+          elStepUploadTitle.appendChild(document.createTextNode('2. อัปโหลดไฟล์ไปยัง Google Drive — ไม่มีไฟล์แนบ (ข้ามขั้นตอนนี้)'));
+          setStepState(elStepUpload, 'step-done');
+          setProgressBar(75, 'กำลังบันทึกข้อมูลลง Google Sheet...');
+        } else if (pendingKeys.length === 0) {
+          elStepUploadTitle.innerHTML = '';
+          elStepUploadTitle.appendChild(document.createTextNode('2. อัปโหลดไฟล์ไปยัง Google Drive — ส่งครบทุกไฟล์แล้ว ✓'));
+          setStepState(elStepUpload, 'step-done');
+          setProgressBar(75, 'กำลังบันทึกข้อมูลลง Google Sheet...');
+        } else {
+          elStepUploadTitle.innerHTML = '';
+          elStepUploadTitle.appendChild(document.createTextNode('2. กำลังอัปโหลดไฟล์ไปยัง Google Drive (' + pendingKeys.length + ' ไฟล์)...'));
+          setStepState(elStepUpload, 'step-active');
+          setProgressBar(15, 'กำลังอัปโหลดไฟล์ไปยัง Google Drive...');
+        }
+
+        setStepState(elStepSheet, '', '3. บันทึกข้อมูลลง Google Sheet (รอดำเนินการ)');
+        setStepState(elStepTelegram, '', '4. ส่งแจ้งเตือนเจ้าหน้าที่ (รอดำเนินการ)');
+
+        uploadPendingSlotsParallel(
+          pendingKeys,
+          patientName,
+          daysText,
+          function (doneCount, totalCount) {
+            var pct = 15 + Math.round((doneCount / totalCount) * 60);
+            setProgressBar(pct, 'อัปโหลดไฟล์แล้ว ' + doneCount + '/' + totalCount + ' ไฟล์');
+          },
+          function (errorCount, errors) {
+            if (errorCount > 0) {
+              elStepUploadTitle.innerHTML = '';
+              elStepUploadTitle.appendChild(document.createTextNode('2. อัปโหลดไฟล์ไม่ครบ (ค้างส่ง ' + errorCount + ' ไฟล์)'));
+              setStepState(elStepUpload, 'step-error');
+              showSubmissionFailure('ไม่สามารถอัปโหลดไฟล์บางรายการได้: ' + errors.join(' | '));
+              return;
+            }
+
+            if (attachedKeys.length > 0) {
+              elStepUploadTitle.innerHTML = '';
+              elStepUploadTitle.appendChild(document.createTextNode('2. อัปโหลดไฟล์ไปยัง Google Drive — ครบทั้งหมดแล้ว ✓'));
+              setStepState(elStepUpload, 'step-done');
+            }
+
+            setProgressBar(80, 'กำลังบันทึกข้อมูลลง Google Sheet...');
+
+            var filesPayload = {};
+            for (var k = 0; k < SLOT_KEYS.length; k++) {
+              var sKey = SLOT_KEYS[k];
+              filesPayload[sKey] = state.slots[sKey] ? state.slots[sKey].uploadedUrl : '';
+            }
+
+            var recordPayload = {
+              action: 'submit_record',
+              submissionId: state.submissionId,
+              patientName: patientName,
+              daysAfterDischarge: daysText,
+              files: filesPayload
+            };
+
+            submitRecordWithRetry(recordPayload, function (recordErr, recordRes) {
+              if (recordErr) {
+                setStepState(elStepSheet, 'step-error', '3. บันทึกข้อมูลลง Google Sheet ไม่สำเร็จ ✕');
+                showSubmissionFailure(recordErr.message || 'ไม่สามารถบันทึกลง Google Sheet ได้');
+                return;
+              }
+
+              setProgressBar(92, 'บันทึก Google Sheet แถวที่ ' + recordRes.rowNumber + ' สำเร็จ');
+              setStepState(elStepSheet, 'step-done', '3. บันทึกข้อมูลลง Google Sheet (แถวที่ ' + recordRes.rowNumber + ') สำเร็จ ✓');
+
+              if (recordRes.telegramSent) {
+                setStepState(elStepTelegram, 'step-done', '4. ส่งแจ้งเตือนเจ้าหน้าที่ (Telegram) เรียบร้อย ✓');
+              } else {
+                setStepState(elStepTelegram, 'step-warn', '4. บันทึกข้อมูลสำเร็จแล้ว แต่แจ้งเตือน Telegram ขัดข้องชั่วคราว');
+              }
+
+              setProgressBar(100, 'ดำเนินการเสร็จสมบูรณ์!');
+              state.isSubmitting = false;
+              elSubmitBtn.disabled = false;
+
+              window.setTimeout(function () {
+                removeClass(elProgressOverlay, 'visible');
+                showSuccessReceipt(patientName, daysText, attachedKeys, recordRes);
+              }, 700);
+            });
+          }
+        );
+      }
+
+      function showSubmissionFailure(errorText) {
+        state.isSubmitting = false;
+        elSubmitBtn.disabled = false;
+
+        elProgressTitle.innerHTML = '';
+        elProgressTitle.appendChild(document.createTextNode('การส่งข้อมูลสะดุดชั่วคราว'));
+
+        elProgressErrorBox.innerHTML = '';
+        elProgressErrorBox.appendChild(document.createTextNode(
+          errorText + ' — รูปที่ส่งสำเร็จแล้วจะถูกเก็บไว้ ไม่ต้องอัปโหลดใหม่'
+        ));
+        addClass(elProgressErrorBox, 'visible');
+        addClass(elProgressRetryActions, 'visible');
+        showToast('ส่งข้อมูลไม่สำเร็จ กรุณากดลองส่งเฉพาะส่วนที่ค้างอยู่อีกครั้ง', 'error');
+      }
+
+      function showSuccessReceipt(patientName, daysText, attachedKeys, res) {
+        storageRemove(CONFIG.DRAFT_KEY);
+
+        document.getElementById('receiptName').innerHTML = '';
+        document.getElementById('receiptName').appendChild(document.createTextNode(patientName));
+
+        document.getElementById('receiptDays').innerHTML = '';
+        document.getElementById('receiptDays').appendChild(document.createTextNode(daysText));
+
+        document.getElementById('receiptTime').innerHTML = '';
+        document.getElementById('receiptTime').appendChild(document.createTextNode(res.timestamp || '-'));
+
+        document.getElementById('receiptRow').innerHTML = '';
+        document.getElementById('receiptRow').appendChild(document.createTextNode('แถวที่ ' + (res.rowNumber || '-')));
+
+        var fileNamesList = [];
+        for (var i = 0; i < attachedKeys.length; i++) {
+          fileNamesList.push(SLOT_LABELS[attachedKeys[i]]);
+        }
+        var filesSummary = fileNamesList.length > 0 ? fileNamesList.join(', ') : 'ไม่มีไฟล์แนบ (ส่งเฉพาะข้อมูล)';
+        document.getElementById('receiptFiles').innerHTML = '';
+        document.getElementById('receiptFiles').appendChild(document.createTextNode(filesSummary));
+
+        var tgBox = document.getElementById('telegramStatusBox');
+        tgBox.innerHTML = '';
+        if (res.telegramSent) {
+          removeClass(tgBox, 'tg-warn');
+          tgBox.appendChild(document.createTextNode('ส่งข้อความแจ้งเตือนเจ้าหน้าที่ทาง Telegram เรียบร้อยแล้ว'));
+        } else {
+          addClass(tgBox, 'tg-warn');
+          tgBox.appendChild(document.createTextNode(
+            'ข้อมูลและรูปภาพถูกบันทึกในระบบแล้ว แต่การแจ้งเตือน Telegram อัตโนมัติขัดข้องชั่วคราว'
+          ));
+        }
+
+        elFormScreen.style.display = 'none';
+        addClass(elSuccessScreen, 'visible');
+        window.scrollTo(0, 0);
+        showToast('บันทึกข้อมูลผู้ป่วยเรียบร้อยแล้ว', 'success');
+      }
+
+      // =========================================================================
+      // Event Listeners Wiring
+      // =========================================================================
+      function bindEvents() {
+        // Font size buttons
+        var fontBtns = document.querySelectorAll('.font-btn');
+        for (var i = 0; i < fontBtns.length; i++) {
+          (function (btn) {
+            btn.onclick = function () {
+              applyFontSize(btn.getAttribute('data-font'), true);
+            };
+          })(fontBtns[i]);
+        }
+
+        // Patient Name Input
+        elPatientNameInput.oninput = function () {
+          invalidateSubmissionId();
+          if (trimStr(elPatientNameInput.value)) {
+            removeClass(elCardPatientName, 'card-invalid');
+            removeClass(elErrPatientName, 'visible');
+          }
+          saveDraft();
+          updateReadinessUI();
+        };
+
+        // Days Radio Choices
+        var radios = document.getElementsByName('daysChoice');
+        for (var r = 0; r < radios.length; r++) {
+          radios[r].onchange = function () {
+            invalidateSubmissionId();
+            syncRadioCardStyles();
+            removeClass(elCardDays, 'card-invalid');
+            removeClass(elErrDays, 'visible');
+            if (getSelectedDaysRadioValue() === '__OTHER__') {
+              elDaysOtherInput.focus();
+            }
+            saveDraft();
+            updateReadinessUI();
+          };
+        }
+
+        // Days Other Input auto-selects "อื่นๆ"
+        elDaysOtherInput.onfocus = function () {
+          if (!elDaysOtherRadio.checked) {
+            elDaysOtherRadio.checked = true;
+            syncRadioCardStyles();
+            saveDraft();
+            updateReadinessUI();
+          }
+        };
+
+        elDaysOtherInput.oninput = function () {
+          invalidateSubmissionId();
+          if (!elDaysOtherRadio.checked) {
+            elDaysOtherRadio.checked = true;
+            syncRadioCardStyles();
+          }
+          if (trimStr(elDaysOtherInput.value)) {
+            removeClass(elCardDays, 'card-invalid');
+            removeClass(elErrDays, 'visible');
+          }
+          saveDraft();
+          updateReadinessUI();
+        };
+
+        // File inputs across all 5 slots
+        var fileInputs = document.querySelectorAll('input[type="file"][data-slot]');
+        for (var f = 0; f < fileInputs.length; f++) {
+          (function (inputEl) {
+            inputEl.onchange = function () {
+              var slotKey = inputEl.getAttribute('data-slot');
+              var file = inputEl.files && inputEl.files.length > 0 ? inputEl.files[0] : null;
+              // ล้างค่า input เพื่อรองรับการเลือกไฟล์เดิมซ้ำได้ทันที
+              inputEl.value = '';
+              if (file && slotKey) {
+                handleFilePicked(slotKey, file);
+              }
+            };
+          })(fileInputs[f]);
+        }
+
+        // Rotate and Remove buttons
+        var rotateBtns = document.querySelectorAll('[data-rotate]');
+        for (var rt = 0; rt < rotateBtns.length; rt++) {
+          (function (btn) {
+            btn.onclick = function () {
+              rotateSlotImage(btn.getAttribute('data-rotate'));
+            };
+          })(rotateBtns[rt]);
+        }
+
+        var removeBtns = document.querySelectorAll('[data-remove]');
+        for (var rm = 0; rm < removeBtns.length; rm++) {
+          (function (btn) {
+            btn.onclick = function () {
+              removeSlotFile(btn.getAttribute('data-remove'));
+            };
+          })(removeBtns[rm]);
+        }
+
+        // Submit Form
+        elWoundForm.onsubmit = function (ev) {
+          if (ev && ev.preventDefault) {
+            ev.preventDefault();
+          }
+          if (state.isSubmitting) {
+            return false;
+          }
+          if (!validateFormFields()) {
+            return false;
+          }
+          if (countAttachedFiles() === 0) {
+            openConfirmModal(
+              'ยังไม่ได้แนบรูปภาพบาดแผล',
+              'ท่านยังไม่ได้เลือกรูปภาพบาดแผลในช่องใดเลย ต้องการส่งเฉพาะข้อมูลชื่อและจำนวนวันหรือไม่?',
+              'ยืนยันส่งโดยไม่มีรูป',
+              false,
+              function () {
+                startSubmissionFlow();
+              }
+            );
+            return false;
+          }
+          startSubmissionFlow();
+          return false;
+        };
+
+        // Clear Form Button
+        elClearFormBtn.onclick = function () {
+          openConfirmModal(
+            'ล้างข้อมูลแบบฟอร์ม',
+            'ต้องการล้างชื่อผู้ป่วย จำนวนวัน และรูปภาพทั้งหมดที่เลือกไว้ใช่หรือไม่?',
+            'ยืนยันล้างข้อมูล',
+            true,
+            function () {
+              resetAllFormFields(false);
+            }
+          );
+        };
+
+        // Confirm Modal Buttons
+        elConfirmModalOkBtn.onclick = function () {
+          var actionFn = state.pendingConfirmAction;
+          closeConfirmModal();
+          if (typeof actionFn === 'function') {
+            actionFn();
+          }
+        };
+
+        elConfirmModalCancelBtn.onclick = function () {
+          closeConfirmModal();
+        };
+
+        // Retry & Back Buttons in Progress Overlay
+        elRetryPendingBtn.onclick = function () {
+          startSubmissionFlow();
+        };
+
+        elBackToEditBtn.onclick = function () {
+          removeClass(elProgressOverlay, 'visible');
+        };
+
+        // New Submission Button on Success Screen
+        elNewSubmissionBtn.onclick = function () {
+          resetAllFormFields(true);
+          removeClass(elSuccessScreen, 'visible');
+          elFormScreen.style.display = 'block';
+          window.scrollTo(0, 0);
+          showToast('พร้อมกรอกข้อมูลผู้ป่วยรายใหม่', 'info');
+        };
+
+        // Online / Offline listeners
+        if (window.addEventListener) {
+          window.addEventListener('online', function () {
+            updateNetworkBanner(true);
+          });
+          window.addEventListener('offline', function () {
+            updateNetworkBanner(true);
+          });
+          window.addEventListener('beforeunload', function (e) {
+            if (state.isSubmitting) {
+              var msg = 'กำลังส่งข้อมูลและรูปภาพ กรุณาอย่าปิดหน้าจอนี้';
+              e.returnValue = msg;
+              return msg;
+            }
+          });
+        }
+      }
+
+      // =========================================================================
+      // Initialization
+      // =========================================================================
+      function init() {
+        var savedFont = storageGet(CONFIG.FONT_SIZE_KEY);
+        if (savedFont) {
+          applyFontSize(savedFont, false);
+        } else {
+          applyFontSize('font-normal', false);
+        }
+
+        checkSetupPlaceholder();
+        updateNetworkBanner(false);
+        bindEvents();
+        restoreDraft();
+        updateReadinessUI();
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
