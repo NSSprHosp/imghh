@@ -861,23 +861,6 @@
       margin-top: 2px;
     }
 
-    .telegram-status-box {
-      padding: 12px 14px;
-      border-radius: 10px;
-      margin-bottom: 14px;
-      font-weight: bold;
-      font-size: 0.92em;
-      border: 1.5px solid #166534;
-      background-color: #F0FDF4;
-      color: #166534;
-    }
-
-    .telegram-status-box.tg-warn {
-      border-color: #D97706;
-      background-color: #FEF3C7;
-      color: #78350F;
-    }
-
     .footer-note {
       text-align: center;
       color: #475569;
@@ -1240,10 +1223,6 @@
         <p>ข้อมูลและรูปภาพของท่านถูกบันทึกเข้าระบบแล้ว</p>
       </div>
 
-      <div id="telegramStatusBox" class="telegram-status-box">
-        แจ้งเตือนเจ้าหน้าที่เรียบร้อยแล้ว
-      </div>
-
       <div class="card">
         <div class="summary-row">
           <span class="summary-label">ชื่อ-นามสกุลผู้ป่วย</span>
@@ -1331,7 +1310,7 @@
       // ตั้งค่า URL ของ Google Apps Script Web App (/exec) ที่ได้จากการ Deploy
       // =========================================================================
       var CONFIG = {
-        GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbw6fjAdZxwMDspQdmJTIJSdhGG0dbOGIAOv-pFWygozLWNA3w-Gaj9Lb4XXkTEwxjFa/exec',
+        GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbyZ-tt9RRKERdfftzxZbj10ApAbzChNYIm1RfXbCwhNm4Bo5UECQ9Yrr_WY-6CfNV_V/exec',
         MAX_IMAGE_LONG_EDGE: 1600,
         FALLBACK_IMAGE_LONG_EDGE: 1280,
         IMAGE_QUALITY: 0.82,
@@ -2600,18 +2579,6 @@
         var filesSummary = fileNamesList.length > 0 ? fileNamesList.join(', ') : 'ไม่มีไฟล์แนบ (ส่งเฉพาะข้อมูล)';
         document.getElementById('receiptFiles').innerHTML = '';
         document.getElementById('receiptFiles').appendChild(document.createTextNode(filesSummary));
-
-        var tgBox = document.getElementById('telegramStatusBox');
-        tgBox.innerHTML = '';
-        if (res.telegramSent) {
-          removeClass(tgBox, 'tg-warn');
-          tgBox.appendChild(document.createTextNode('ส่งข้อความแจ้งเตือนเจ้าหน้าที่ทาง Telegram เรียบร้อยแล้ว'));
-        } else {
-          addClass(tgBox, 'tg-warn');
-          tgBox.appendChild(document.createTextNode(
-            'ข้อมูลและรูปภาพถูกบันทึกในระบบแล้ว แต่การแจ้งเตือน Telegram อัตโนมัติขัดข้องชั่วคราว'
-          ));
-        }
 
         elFormScreen.style.display = 'none';
         addClass(elSuccessScreen, 'visible');
