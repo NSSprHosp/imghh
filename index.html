@@ -1003,7 +1003,7 @@
         <!-- Section Header for Wound Photos -->
         <div class="section-banner">
           <div class="section-heading">อัปโหลดรูปภาพบาดแผล</div>
-          <div class="count-pill" id="attachedCountPill">แนบไฟล์แล้ว 0/5 ช่อง</div>
+          <div class="count-pill" id="attachedCountPill">แนบไฟล์แล้ว 0/6 ช่อง</div>
           <p class="section-note">
             เลือกเฉพาะบริเวณที่มีบาดแผล (ไม่บังคับทุกช่อง) ระบบจะปรับขนาดรูปให้อัตโนมัติเพื่อให้ส่งได้รวดเร็ว
           </p>
@@ -1161,7 +1161,45 @@
           </div>
         </div>
 
-        <!-- 7. รูปเพิ่มเติม -->
+        <!-- 7. รูปภาพแบบสอบถาม/สัมภาษณ์ฯ (ความพึงพอใจ) -->
+        <div class="card" id="card_survey">
+          <div class="slot-header">
+            <span class="slot-badge">ไม่บังคับ • รูปภาพ 1 รูป สูงสุด 10 MB</span>
+            <div class="field-title">รูปภาพแบบสอบถาม/สัมภาษณ์ฯ (ความพึงพอใจ)</div>
+          </div>
+          <div class="slot-actions-table">
+            <div class="slot-action-cell cell-left">
+              <label class="pick-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                <span>ถ่ายรูป</span>
+                <input type="file" class="hidden-file-input" accept="image/*" capture="environment" data-slot="survey">
+              </label>
+            </div>
+            <div class="slot-action-cell cell-right">
+              <label class="pick-btn btn-gallery">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <span>เลือกรูป</span>
+                <input type="file" class="hidden-file-input" accept="image/*" data-slot="survey">
+              </label>
+            </div>
+          </div>
+          <div class="preview-box" id="preview_survey">
+            <div class="preview-img-wrap" id="imgWrap_survey">
+              <img class="preview-img" id="img_survey" alt="ตัวอย่างรูปภาพแบบสอบถาม/สัมภาษณ์ฯ (ความพึงพอใจ)">
+            </div>
+            <div class="preview-meta" id="meta_survey"></div>
+            <div class="preview-tools-table">
+              <div class="preview-tool-cell cell-left">
+                <button type="button" class="small-action-btn" data-rotate="survey">หมุนภาพ 90°</button>
+              </div>
+              <div class="preview-tool-cell cell-right">
+                <button type="button" class="small-action-btn btn-remove" data-remove="survey">ลบรูปนี้</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 8. รูปเพิ่มเติม -->
         <div class="card" id="card_extra">
           <div class="slot-header">
             <span class="slot-badge">ไม่บังคับ • รูปภาพ หรือ วิดีโอ 1 ไฟล์ สูงสุด 10 MB</span>
@@ -1328,12 +1366,13 @@
         FONT_SIZE_KEY: 'wound_photo_form_fontsize_v1'
       };
 
-      var SLOT_KEYS = ['chest', 'leftArm', 'rightLeg', 'leftLeg', 'extra'];
+      var SLOT_KEYS = ['chest', 'leftArm', 'rightLeg', 'leftLeg', 'survey', 'extra'];
       var SLOT_LABELS = {
         chest: 'ภาพบาดแผลบริเวณ หน้าอก',
         leftArm: 'ภาพบาดแผลบริเวณ แขนซ้าย',
         rightLeg: 'ภาพบาดแผลบริเวณ ขาขวา',
         leftLeg: 'ภาพบาดแผลบริเวณ ขาซ้าย',
+        survey: 'รูปภาพแบบสอบถาม/สัมภาษณ์ฯ (ความพึงพอใจ)',
         extra: 'รูปเพิ่มเติม'
       };
 
@@ -1343,6 +1382,7 @@
           leftArm: null,
           rightLeg: null,
           leftLeg: null,
+          survey: null,
           extra: null
         },
         submissionId: '',
@@ -1629,7 +1669,7 @@
       function updateReadinessUI() {
         var attached = countAttachedFiles();
         elAttachedCountPill.innerHTML = '';
-        elAttachedCountPill.appendChild(document.createTextNode('แนบไฟล์แล้ว ' + attached + '/5 ช่อง'));
+        elAttachedCountPill.appendChild(document.createTextNode('แนบไฟล์แล้ว ' + attached + '/' + SLOT_KEYS.length + ' ช่อง'));
 
         var nameVal = trimStr(elPatientNameInput.value);
         var daysChoice = getSelectedDaysRadioValue();
