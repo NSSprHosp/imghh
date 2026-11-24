@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ส่งข้อมูลรูปบาดแผลหลังผ่าตัด</title>
+  <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js" defer></script>
   <style>
     * {
       box-sizing: border-box;
@@ -529,6 +530,33 @@
       color: #92400E;
     }
 
+    .preview-meta.meta-error {
+      color: #991B1B;
+    }
+
+    .slot-progress-wrap {
+      display: none;
+      margin-bottom: 10px;
+    }
+
+    .slot-progress-wrap.visible {
+      display: block;
+    }
+
+    .slot-progress-track {
+      width: 100%;
+      height: 10px;
+      background-color: #E2E8F0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .slot-progress-fill {
+      width: 0%;
+      height: 100%;
+      background-color: #0F5C5C;
+    }
+
     .preview-tools-table {
       display: table;
       width: 100%;
@@ -570,6 +598,12 @@
       border-color: #B91C1C;
       color: #991B1B;
       background-color: #FEF2F2;
+    }
+
+    .small-action-btn.btn-retry {
+      border-color: #0F5C5C;
+      color: #0B4A4A;
+      background-color: #EDF7F7;
     }
 
     /* Readiness & Primary Actions */
@@ -1005,7 +1039,7 @@
           <div class="section-heading">อัปโหลดรูปภาพบาดแผล</div>
           <div class="count-pill" id="attachedCountPill">แนบไฟล์แล้ว 0/6 ช่อง</div>
           <p class="section-note">
-            เลือกเฉพาะบริเวณที่มีบาดแผล (ไม่บังคับทุกช่อง) ระบบจะปรับขนาดรูปให้อัตโนมัติเพื่อให้ส่งได้รวดเร็ว
+            เลือกเฉพาะบริเวณที่มีบาดแผล (ไม่บังคับทุกช่อง) ระบบจะย่อขนาดและอัปโหลดให้ทันทีที่เลือกรูป เพื่อความรวดเร็วตอนกดส่ง
           </p>
         </div>
 
@@ -1036,6 +1070,10 @@
               <img class="preview-img" id="img_chest" alt="ตัวอย่างภาพบาดแผลบริเวณหน้าอก">
             </div>
             <div class="preview-meta" id="meta_chest"></div>
+            <div class="slot-progress-wrap" id="progWrap_chest">
+              <div class="slot-progress-track"><div class="slot-progress-fill" id="progFill_chest"></div></div>
+            </div>
+            <button type="button" class="small-action-btn btn-retry" id="retryBtn_chest" data-retry-slot="chest" style="display:none; margin-bottom:8px;">อัปโหลดไฟล์นี้ใหม่</button>
             <div class="preview-tools-table">
               <div class="preview-tool-cell cell-left">
                 <button type="button" class="small-action-btn" data-rotate="chest">หมุนภาพ 90°</button>
@@ -1074,6 +1112,10 @@
               <img class="preview-img" id="img_leftArm" alt="ตัวอย่างภาพบาดแผลบริเวณแขนซ้าย">
             </div>
             <div class="preview-meta" id="meta_leftArm"></div>
+            <div class="slot-progress-wrap" id="progWrap_leftArm">
+              <div class="slot-progress-track"><div class="slot-progress-fill" id="progFill_leftArm"></div></div>
+            </div>
+            <button type="button" class="small-action-btn btn-retry" id="retryBtn_leftArm" data-retry-slot="leftArm" style="display:none; margin-bottom:8px;">อัปโหลดไฟล์นี้ใหม่</button>
             <div class="preview-tools-table">
               <div class="preview-tool-cell cell-left">
                 <button type="button" class="small-action-btn" data-rotate="leftArm">หมุนภาพ 90°</button>
@@ -1112,6 +1154,10 @@
               <img class="preview-img" id="img_rightLeg" alt="ตัวอย่างภาพบาดแผลบริเวณขาขวา">
             </div>
             <div class="preview-meta" id="meta_rightLeg"></div>
+            <div class="slot-progress-wrap" id="progWrap_rightLeg">
+              <div class="slot-progress-track"><div class="slot-progress-fill" id="progFill_rightLeg"></div></div>
+            </div>
+            <button type="button" class="small-action-btn btn-retry" id="retryBtn_rightLeg" data-retry-slot="rightLeg" style="display:none; margin-bottom:8px;">อัปโหลดไฟล์นี้ใหม่</button>
             <div class="preview-tools-table">
               <div class="preview-tool-cell cell-left">
                 <button type="button" class="small-action-btn" data-rotate="rightLeg">หมุนภาพ 90°</button>
@@ -1150,6 +1196,10 @@
               <img class="preview-img" id="img_leftLeg" alt="ตัวอย่างภาพบาดแผลบริเวณขาซ้าย">
             </div>
             <div class="preview-meta" id="meta_leftLeg"></div>
+            <div class="slot-progress-wrap" id="progWrap_leftLeg">
+              <div class="slot-progress-track"><div class="slot-progress-fill" id="progFill_leftLeg"></div></div>
+            </div>
+            <button type="button" class="small-action-btn btn-retry" id="retryBtn_leftLeg" data-retry-slot="leftLeg" style="display:none; margin-bottom:8px;">อัปโหลดไฟล์นี้ใหม่</button>
             <div class="preview-tools-table">
               <div class="preview-tool-cell cell-left">
                 <button type="button" class="small-action-btn" data-rotate="leftLeg">หมุนภาพ 90°</button>
@@ -1188,6 +1238,10 @@
               <img class="preview-img" id="img_survey" alt="ตัวอย่างรูปภาพแบบสอบถาม/สัมภาษณ์ฯ (ความพึงพอใจ)">
             </div>
             <div class="preview-meta" id="meta_survey"></div>
+            <div class="slot-progress-wrap" id="progWrap_survey">
+              <div class="slot-progress-track"><div class="slot-progress-fill" id="progFill_survey"></div></div>
+            </div>
+            <button type="button" class="small-action-btn btn-retry" id="retryBtn_survey" data-retry-slot="survey" style="display:none; margin-bottom:8px;">อัปโหลดไฟล์นี้ใหม่</button>
             <div class="preview-tools-table">
               <div class="preview-tool-cell cell-left">
                 <button type="button" class="small-action-btn" data-rotate="survey">หมุนภาพ 90°</button>
@@ -1227,6 +1281,10 @@
             </div>
             <div class="video-badge-box" id="videoBox_extra"></div>
             <div class="preview-meta" id="meta_extra"></div>
+            <div class="slot-progress-wrap" id="progWrap_extra">
+              <div class="slot-progress-track"><div class="slot-progress-fill" id="progFill_extra"></div></div>
+            </div>
+            <button type="button" class="small-action-btn btn-retry" id="retryBtn_extra" data-retry-slot="extra" style="display:none; margin-bottom:8px;">อัปโหลดไฟล์นี้ใหม่</button>
             <div class="preview-tools-table">
               <div class="preview-tool-cell cell-left" id="rotateCell_extra">
                 <button type="button" class="small-action-btn" data-rotate="extra">หมุนภาพ 90°</button>
@@ -1273,10 +1331,6 @@
         <div class="summary-row">
           <span class="summary-label">เวลาที่บันทึกข้อมูล</span>
           <span class="summary-value" id="receiptTime">-</span>
-        </div>
-        <div class="summary-row">
-          <span class="summary-label">ลำดับแถวใน Google Sheet</span>
-          <span class="summary-value" id="receiptRow">-</span>
         </div>
         <div class="summary-row">
           <span class="summary-label">ไฟล์ที่ส่งสำเร็จ</span>
@@ -1349,6 +1403,7 @@
       // =========================================================================
       var CONFIG = {
         GAS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbyZ-tt9RRKERdfftzxZbj10ApAbzChNYIm1RfXbCwhNm4Bo5UECQ9Yrr_WY-6CfNV_V/exec',
+        MAX_IMAGE_SIZE_MB: 1,
         MAX_IMAGE_LONG_EDGE: 1600,
         FALLBACK_IMAGE_LONG_EDGE: 1280,
         IMAGE_QUALITY: 0.82,
@@ -1359,6 +1414,8 @@
         MAX_RAW_IMAGE_BYTES: 30 * 1024 * 1024,
         MAX_UPLOAD_BYTES: 10 * 1024 * 1024,
         PARALLEL_UPLOADS: 2,
+        INIT_TIMEOUT_MS: 30000,
+        DIRECT_PUT_TIMEOUT_MS: 60000,
         UPLOAD_TIMEOUT_MS: 45000,
         SUBMIT_TIMEOUT_MS: 60000,
         MAX_RETRIES: 2,
@@ -1385,6 +1442,7 @@
           survey: null,
           extra: null
         },
+        nextOpToken: 1,
         submissionId: '',
         isSubmitting: false,
         pendingConfirmAction: null
@@ -1666,8 +1724,48 @@
         return count;
       }
 
+      function getBusyUploadCount() {
+        var count = 0;
+        for (var i = 0; i < SLOT_KEYS.length; i++) {
+          var s = state.slots[SLOT_KEYS[i]];
+          if (s && (s.status === 'compressing' || s.status === 'uploading')) {
+            count++;
+          }
+        }
+        return count;
+      }
+
+      function getErrorUploadCount() {
+        var count = 0;
+        for (var i = 0; i < SLOT_KEYS.length; i++) {
+          var s = state.slots[SLOT_KEYS[i]];
+          if (s && s.status === 'error') {
+            count++;
+          }
+        }
+        return count;
+      }
+
+      function syncSubmitLockState() {
+        var busyCount = getBusyUploadCount();
+        elSubmitBtn.innerHTML = '';
+        if (state.isSubmitting) {
+          elSubmitBtn.disabled = true;
+          elSubmitBtn.appendChild(document.createTextNode('กำลังบันทึกข้อมูล...'));
+        } else if (busyCount > 0) {
+          elSubmitBtn.disabled = true;
+          elSubmitBtn.appendChild(document.createTextNode('กำลังอัปโหลดรูปภาพ (' + busyCount + ' ไฟล์) กรุณารอสักครู่...'));
+        } else {
+          elSubmitBtn.disabled = false;
+          elSubmitBtn.appendChild(document.createTextNode('ส่งข้อมูลและรูปภาพ'));
+        }
+        updateReadinessUI();
+      }
+
       function updateReadinessUI() {
         var attached = countAttachedFiles();
+        var busyCount = getBusyUploadCount();
+        var errorCount = getErrorUploadCount();
         elAttachedCountPill.innerHTML = '';
         elAttachedCountPill.appendChild(document.createTextNode('แนบไฟล์แล้ว ' + attached + '/' + SLOT_KEYS.length + ' ช่อง'));
 
@@ -1677,10 +1775,20 @@
 
         var isReady = Boolean(nameVal && daysChoice && daysVal);
         elReadinessBar.innerHTML = '';
-        if (isReady) {
+        if (busyCount > 0) {
+          removeClass(elReadinessBar, 'ready');
+          elReadinessBar.appendChild(document.createTextNode(
+            'กำลังย่อและอัปโหลดไฟล์ล่วงหน้า ' + busyCount + ' รายการ ปุ่มส่งจะปลดล็อกอัตโนมัติเมื่อเสร็จ'
+          ));
+        } else if (errorCount > 0) {
+          removeClass(elReadinessBar, 'ready');
+          elReadinessBar.appendChild(document.createTextNode(
+            'มีไฟล์ ' + errorCount + ' ช่องอัปโหลดไม่สำเร็จ กดปุ่ม "อัปโหลดไฟล์นี้ใหม่" หรือกดส่งเพื่อให้ระบบลองอีกครั้ง'
+          ));
+        } else if (isReady) {
           addClass(elReadinessBar, 'ready');
           var msg = attached > 0
-            ? 'ข้อมูลครบถ้วน พร้อมส่ง (แนบไฟล์แล้ว ' + attached + ' ช่อง)'
+            ? 'ข้อมูลครบถ้วน พร้อมส่งทันที (อัปโหลดล่วงหน้าแล้ว ' + attached + ' ช่อง)'
             : 'ข้อมูลครบถ้วน พร้อมส่ง (ยังไม่ได้แนบไฟล์รูปภาพ)';
           elReadinessBar.appendChild(document.createTextNode(msg));
         } else {
@@ -1787,8 +1895,103 @@
       }
 
       // =========================================================================
-      // File Selection, Fast Client-Side Image Compression & Rotation
+      // File Selection, Library Compression, Direct Pre-upload & Rotation
       // =========================================================================
+      function getClientOrigin() {
+        if (!window.location) {
+          return '';
+        }
+        var proto = window.location.protocol || '';
+        var host = window.location.host || '';
+        if ((proto === 'http:' || proto === 'https:') && host) {
+          return proto + '//' + host;
+        }
+        return '';
+      }
+
+      function dataUrlToBlob(dataUrl, fallbackMime) {
+        try {
+          var parts = String(dataUrl).split(',');
+          if (parts.length < 2) {
+            return null;
+          }
+          var mimeMatch = parts[0].match(/:([^;]+);/);
+          var mime = (mimeMatch && mimeMatch[1]) ? mimeMatch[1] : (fallbackMime || 'image/jpeg');
+          var binStr = window.atob(parts[1]);
+          var len = binStr.length;
+          var arr = new Uint8Array(len);
+          for (var i = 0; i < len; i++) {
+            arr[i] = binStr.charCodeAt(i);
+          }
+          return new Blob([arr], { type: mime });
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function blobToDataUrl(blob, callback) {
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+          callback(null, ev.target.result);
+        };
+        reader.onerror = function () {
+          callback('ไม่สามารถอ่านไฟล์จากเครื่องได้ กรุณาลองใหม่อีกครั้ง');
+        };
+        reader.readAsDataURL(blob);
+      }
+
+      function createPreviewUrlForBlob(blob, callback) {
+        var urlApi = window.URL || window.webkitURL;
+        if (urlApi && typeof urlApi.createObjectURL === 'function') {
+          try {
+            var objUrl = urlApi.createObjectURL(blob);
+            callback(null, objUrl, true);
+            return;
+          } catch (ignoreObjUrl) {}
+        }
+        blobToDataUrl(blob, function (err, dataUrl) {
+          if (err) {
+            callback(err, '', false);
+            return;
+          }
+          callback(null, dataUrl, false);
+        });
+      }
+
+      function requestDeleteTempFile(fileId) {
+        if (!fileId || !checkSetupPlaceholder()) {
+          return;
+        }
+        sendGasRequest(
+          { action: 'delete_temp_file', fileId: fileId },
+          15000,
+          function () {}
+        );
+      }
+
+      function cleanupSlotResources(slot, shouldDeleteRemoteTemp) {
+        if (!slot) {
+          return;
+        }
+        if (slot.activeXhr) {
+          try {
+            slot.activeXhr.abort();
+          } catch (ignoreAbort) {}
+          slot.activeXhr = null;
+        }
+        if (slot.isObjectPreviewUrl && slot.previewUrl) {
+          var urlApi = window.URL || window.webkitURL;
+          if (urlApi && urlApi.revokeObjectURL) {
+            try {
+              urlApi.revokeObjectURL(slot.previewUrl);
+            } catch (ignoreRevoke) {}
+          }
+        }
+        if (shouldDeleteRemoteTemp && slot.fileId) {
+          requestDeleteTempFile(slot.fileId);
+        }
+      }
+
       function handleFilePicked(slotKey, file) {
         if (!file) {
           return;
@@ -1825,19 +2028,30 @@
             return;
           }
           invalidateSubmissionId();
+          cleanupSlotResources(state.slots[slotKey], true);
+          var videoToken = state.nextOpToken++;
           state.slots[slotKey] = {
             kind: 'video',
-            file: file,
+            status: 'uploading',
+            progress: 10,
+            statusText: 'กำลังเริ่มอัปโหลดวิดีโอ...',
+            blob: file,
+            previewUrl: '',
+            isObjectPreviewUrl: false,
             mimeType: rawType || 'video/mp4',
             fileName: file.name || 'video.mp4',
             originalSize: file.size,
             finalSize: file.size,
-            dataUrl: '',
-            uploadedUrl: ''
+            fileId: '',
+            uploadedUrl: '',
+            webViewLink: '',
+            wasFallbackRaw: false,
+            opToken: videoToken,
+            activeXhr: null
           };
           renderSlotPreview(slotKey);
-          updateReadinessUI();
-          showToast('เตรียมวิดีโอ "' + SLOT_LABELS[slotKey] + '" พร้อมส่งแล้ว (' + formatBytes(file.size) + ')', 'success');
+          syncSubmitLockState();
+          startPreUploadForSlot(slotKey);
           return;
         }
 
@@ -1846,61 +2060,168 @@
           return;
         }
 
-        compressImageFile(file, rawType, function (err, result) {
-          if (err) {
-            showToast(err, 'error');
+        invalidateSubmissionId();
+        cleanupSlotResources(state.slots[slotKey], true);
+        var opToken = state.nextOpToken++;
+
+        state.slots[slotKey] = {
+          kind: 'image',
+          status: 'compressing',
+          progress: 6,
+          statusText: 'กำลังย่อขนาดภาพ...',
+          blob: null,
+          previewUrl: '',
+          isObjectPreviewUrl: false,
+          mimeType: rawType || 'image/jpeg',
+          fileName: file.name || 'wound.jpg',
+          originalSize: file.size,
+          finalSize: file.size,
+          fileId: '',
+          uploadedUrl: '',
+          webViewLink: '',
+          wasFallbackRaw: false,
+          opToken: opToken,
+          activeXhr: null
+        };
+        renderSlotPreview(slotKey);
+        syncSubmitLockState();
+
+        compressImageWithLibrary(
+          file,
+          rawType,
+          function (pct) {
+            var current = state.slots[slotKey];
+            if (!current || current.opToken !== opToken || current.status !== 'compressing') {
+              return;
+            }
+            current.progress = Math.max(6, Math.min(24, Math.round(6 + (pct * 0.18))));
+            renderSlotProgressOnly(slotKey);
+          },
+          function (err, result) {
+            var current = state.slots[slotKey];
+            if (!current || current.opToken !== opToken) {
+              if (result && result.isObjectPreviewUrl && result.previewUrl) {
+                var urlApi = window.URL || window.webkitURL;
+                if (urlApi && urlApi.revokeObjectURL) {
+                  try { urlApi.revokeObjectURL(result.previewUrl); } catch (ignoreRev) {}
+                }
+              }
+              return;
+            }
+
+            if (err) {
+              state.slots[slotKey] = null;
+              renderSlotPreview(slotKey);
+              syncSubmitLockState();
+              showToast(err, 'error');
+              return;
+            }
+
+            current.blob = result.blob;
+            current.mimeType = result.mimeType;
+            current.finalSize = result.finalSize;
+            current.previewUrl = result.previewUrl;
+            current.isObjectPreviewUrl = Boolean(result.isObjectPreviewUrl);
+            current.wasFallbackRaw = Boolean(result.wasFallbackRaw);
+            current.status = 'uploading';
+            current.progress = 25;
+            current.statusText = 'ย่อภาพสำเร็จ กำลังอัปโหลด...';
+
+            renderSlotPreview(slotKey);
+            syncSubmitLockState();
+            startPreUploadForSlot(slotKey);
+          }
+        );
+      }
+
+      function compressImageWithLibrary(file, rawType, onProgress, onDone) {
+        function finishWithBlob(outBlob, isFallbackRaw) {
+          if (!outBlob || !outBlob.size) {
+            compressImageFileCanvas(file, rawType, onDone);
             return;
           }
-          invalidateSubmissionId();
-          state.slots[slotKey] = {
-            kind: 'image',
-            file: null,
-            mimeType: result.mimeType,
-            fileName: file.name || 'wound.jpg',
-            originalSize: file.size,
-            finalSize: result.finalSize,
-            dataUrl: result.dataUrl,
-            uploadedUrl: '',
-            wasFallbackRaw: Boolean(result.wasFallbackRaw)
-          };
-          renderSlotPreview(slotKey);
-          updateReadinessUI();
-
-          if (result.wasFallbackRaw) {
-            showToast('ไม่สามารถย่อรูปชนิดนี้ได้ ระบบจะส่งไฟล์ต้นฉบับ (' + formatBytes(result.finalSize) + ')', 'warning');
-          } else {
-            showToast('ย่อรูป "' + SLOT_LABELS[slotKey] + '" สำเร็จ (' + formatBytes(file.size) + ' → ' + formatBytes(result.finalSize) + ')', 'success');
+          if (outBlob.size > CONFIG.MAX_UPLOAD_BYTES) {
+            compressImageFileCanvas(file, rawType, onDone);
+            return;
           }
-        });
+          createPreviewUrlForBlob(outBlob, function (prevErr, previewUrl, isObjUrl) {
+            if (prevErr) {
+              onDone(prevErr);
+              return;
+            }
+            onDone(null, {
+              blob: outBlob,
+              mimeType: outBlob.type || 'image/jpeg',
+              finalSize: outBlob.size,
+              previewUrl: previewUrl,
+              isObjectPreviewUrl: isObjUrl,
+              wasFallbackRaw: Boolean(isFallbackRaw)
+            });
+          });
+        }
+
+        function runLib(useWorker) {
+          var opts = {
+            maxSizeMB: CONFIG.MAX_IMAGE_SIZE_MB,
+            maxWidthOrHeight: CONFIG.MAX_IMAGE_LONG_EDGE,
+            useWebWorker: useWorker,
+            fileType: 'image/jpeg',
+            initialQuality: CONFIG.IMAGE_QUALITY,
+            onProgress: function (pct) {
+              if (typeof onProgress === 'function') {
+                onProgress(pct);
+              }
+            }
+          };
+          return window.imageCompression(file, opts);
+        }
+
+        if (typeof window.imageCompression === 'function') {
+          try {
+            runLib(true).then(
+              function (compressedBlob) {
+                finishWithBlob(compressedBlob, false);
+              },
+              function () {
+                try {
+                  runLib(false).then(
+                    function (compressedNoWorker) {
+                      finishWithBlob(compressedNoWorker, false);
+                    },
+                    function () {
+                      compressImageFileCanvas(file, rawType, onDone);
+                    }
+                  );
+                } catch (libErr2) {
+                  compressImageFileCanvas(file, rawType, onDone);
+                }
+              }
+            );
+            return;
+          } catch (libErr1) {}
+        }
+
+        compressImageFileCanvas(file, rawType, onDone);
       }
 
-      function readRawFileAsDataUrl(file, callback) {
-        var reader = new FileReader();
-        reader.onload = function (ev) {
-          callback(null, ev.target.result);
-        };
-        reader.onerror = function () {
-          callback('ไม่สามารถอ่านไฟล์จากเครื่องได้ กรุณาลองใหม่อีกครั้ง');
-        };
-        reader.readAsDataURL(file);
-      }
-
-      function compressImageFile(file, rawType, callback) {
+      function compressImageFileCanvas(file, rawType, callback) {
         var urlApi = window.URL || window.webkitURL;
         var objectUrl = '';
         var img = new Image();
 
         function fallbackRawOrFail() {
           if (file.size <= CONFIG.MAX_UPLOAD_BYTES) {
-            readRawFileAsDataUrl(file, function (readErr, dataUrl) {
+            createPreviewUrlForBlob(file, function (readErr, previewUrl, isObjUrl) {
               if (readErr) {
                 callback(readErr);
                 return;
               }
               callback(null, {
-                dataUrl: dataUrl,
+                blob: file,
                 mimeType: rawType || 'image/jpeg',
                 finalSize: file.size,
+                previewUrl: previewUrl,
+                isObjectPreviewUrl: isObjUrl,
                 wasFallbackRaw: true
               });
             });
@@ -1924,18 +2245,18 @@
           }
 
           var maxDim = Math.max(origW, origH);
-
-          // หากเป็น JPEG ขนาดเล็กอยู่แล้ว (<= 250 KB และด้านยาว <= 1600px) อ่านตรงเพื่อความรวดเร็ว
           if (rawType === 'image/jpeg' && file.size <= CONFIG.KEEP_ORIG_JPEG_MAX_BYTES && maxDim <= CONFIG.MAX_IMAGE_LONG_EDGE) {
-            readRawFileAsDataUrl(file, function (readErr, dataUrl) {
+            createPreviewUrlForBlob(file, function (readErr, previewUrl, isObjUrl) {
               if (readErr) {
                 callback(readErr);
                 return;
               }
               callback(null, {
-                dataUrl: dataUrl,
+                blob: file,
                 mimeType: 'image/jpeg',
                 finalSize: file.size,
+                previewUrl: previewUrl,
+                isObjectPreviewUrl: isObjUrl,
                 wasFallbackRaw: false
               });
             });
@@ -1961,10 +2282,18 @@
               return;
             }
 
+            var outBlob = dataUrlToBlob(encoded, 'image/jpeg');
+            if (!outBlob) {
+              fallbackRawOrFail();
+              return;
+            }
+
             callback(null, {
-              dataUrl: encoded,
+              blob: outBlob,
               mimeType: 'image/jpeg',
-              finalSize: byteSize,
+              finalSize: outBlob.size,
+              previewUrl: encoded,
+              isObjectPreviewUrl: false,
               wasFallbackRaw: false
             });
           } catch (canvasErr) {
@@ -1989,7 +2318,7 @@
           } catch (ignoreObjUrl) {}
         }
 
-        readRawFileAsDataUrl(file, function (readErr, dataUrl) {
+        blobToDataUrl(file, function (readErr, dataUrl) {
           if (readErr) {
             callback(readErr);
             return;
@@ -2024,48 +2353,429 @@
         return dataUrl;
       }
 
-      function rotateSlotImage(slotKey) {
-        var slot = state.slots[slotKey];
-        if (!slot || slot.kind !== 'image' || !slot.dataUrl) {
+      function uploadBinaryToResumableUrl(uploadUrl, blob, mimeType, slot, onProgress, onDone) {
+        var xhr = new XMLHttpRequest();
+        var done = false;
+        slot.activeXhr = xhr;
+
+        function finish(errObj, dataObj) {
+          if (done) {
+            return;
+          }
+          done = true;
+          if (slot.activeXhr === xhr) {
+            slot.activeXhr = null;
+          }
+          callbackSafe(errObj, dataObj);
+        }
+
+        function callbackSafe(errObj, dataObj) {
+          onDone(errObj, dataObj);
+        }
+
+        try {
+          xhr.open('PUT', uploadUrl, true);
+          xhr.setRequestHeader('Content-Type', mimeType || 'application/octet-stream');
+          xhr.timeout = CONFIG.DIRECT_PUT_TIMEOUT_MS;
+        } catch (openErr) {
+          finish({ message: 'ไม่สามารถเริ่มอัปโหลดตรงได้', corsOrNetwork: true, retryable: true }, null);
           return;
         }
 
-        var img = new Image();
-        img.onload = function () {
-          try {
-            var w = img.naturalWidth || img.width;
-            var h = img.naturalHeight || img.height;
-            var canvas = document.createElement('canvas');
-            canvas.width = h;
-            canvas.height = w;
+        if (xhr.upload) {
+          xhr.upload.onprogress = function (ev) {
+            if (ev && ev.lengthComputable && ev.total > 0 && typeof onProgress === 'function') {
+              onProgress(Math.round((ev.loaded / ev.total) * 100));
+            }
+          };
+        }
 
-            var ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.translate(canvas.width / 2, canvas.height / 2);
-            ctx.rotate(Math.PI / 2);
-            ctx.drawImage(img, -w / 2, -h / 2);
-
-            var rotatedUrl = canvas.toDataURL('image/jpeg', CONFIG.IMAGE_QUALITY);
-            canvas.width = 1;
-            canvas.height = 1;
-
-            invalidateSubmissionId();
-            slot.dataUrl = rotatedUrl;
-            slot.mimeType = 'image/jpeg';
-            slot.finalSize = estimateBase64Bytes(rotatedUrl);
-            slot.uploadedUrl = '';
-
-            renderSlotPreview(slotKey);
-            showToast('หมุนภาพ "' + SLOT_LABELS[slotKey] + '" 90° เรียบร้อย', 'info');
-          } catch (err) {
-            showToast('ไม่สามารถหมุนภาพนี้ได้บนอุปกรณ์ของท่าน', 'error');
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState !== 4) {
+            return;
+          }
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              var parsed = JSON.parse(xhr.responseText);
+              if (parsed && parsed.id) {
+                finish(null, {
+                  fileId: parsed.id,
+                  fileUrl: 'https://drive.google.com/open?id=' + parsed.id,
+                  webViewLink: parsed.webViewLink || ''
+                });
+              } else {
+                finish({ message: 'ไม่ได้รับรหัสไฟล์จาก Google Drive', corsOrNetwork: false, retryable: true }, null);
+              }
+            } catch (parseErr) {
+              finish({ message: 'อ่านผลลัพธ์จาก Google Drive ไม่สำเร็จ', corsOrNetwork: false, retryable: true }, null);
+            }
+          } else {
+            finish({
+              message: xhr.status === 0
+                ? 'เชื่อมต่อ Google Drive โดยตรงไม่ได้'
+                : 'Google Drive ตอบกลับ HTTP ' + xhr.status,
+              corsOrNetwork: xhr.status === 0 || xhr.status === 403 || xhr.status === 404,
+              retryable: true
+            }, null);
           }
         };
-        img.onerror = function () {
-          showToast('ไม่สามารถโหลดภาพเพื่อหมุนได้', 'error');
+
+        xhr.ontimeout = function () {
+          finish({ message: 'อัปโหลดตรงใช้เวลานานเกินกำหนด', corsOrNetwork: true, retryable: true }, null);
         };
-        img.src = slot.dataUrl;
+
+        xhr.onerror = function () {
+          finish({ message: 'เกิดข้อผิดพลาดเครือข่ายขณะส่งตรงเข้า Google Drive', corsOrNetwork: true, retryable: true }, null);
+        };
+
+        xhr.onabort = function () {
+          finish({ message: 'ยกเลิกการอัปโหลดแล้ว', aborted: true, retryable: false }, null);
+        };
+
+        try {
+          xhr.send(blob);
+        } catch (sendErr) {
+          finish({ message: 'ไม่สามารถส่งไฟล์ไบนารีได้', corsOrNetwork: true, retryable: true }, null);
+        }
+      }
+
+      function uploadViaGasFallback(slotKey, slot, opToken, onDone) {
+        if (!slot || !slot.blob) {
+          onDone({ message: 'ไม่พบข้อมูลไฟล์', retryable: false }, null);
+          return;
+        }
+        blobToDataUrl(slot.blob, function (readErr, dataUrl) {
+          var current = state.slots[slotKey];
+          if (!current || current.opToken !== opToken) {
+            onDone({ message: 'ยกเลิกการอัปโหลดแล้ว', aborted: true, retryable: false }, null);
+            return;
+          }
+          if (readErr) {
+            onDone({ message: readErr, retryable: false }, null);
+            return;
+          }
+
+          var attempt = 0;
+          function attemptFallback() {
+            attempt++;
+            var cur = state.slots[slotKey];
+            if (!cur || cur.opToken !== opToken) {
+              onDone({ message: 'ยกเลิกการอัปโหลดแล้ว', aborted: true, retryable: false }, null);
+              return;
+            }
+            cur.progress = attempt === 1 ? 60 : 75;
+            cur.statusText = attempt === 1
+              ? 'กำลังอัปโหลดผ่านเซิร์ฟเวอร์สำรอง...'
+              : 'กำลังลองอัปโหลดซ้ำ...';
+            renderSlotProgressOnly(slotKey);
+
+            sendGasRequest({
+              action: 'upload_file',
+              isTemp: true,
+              fieldKey: slotKey,
+              mimeType: cur.mimeType,
+              fileName: cur.fileName,
+              base64Data: dataUrl
+            }, CONFIG.UPLOAD_TIMEOUT_MS, function (err, res) {
+              if (!err && res && res.fileId) {
+                onDone(null, {
+                  fileId: res.fileId,
+                  fileUrl: res.fileUrl || ('https://drive.google.com/open?id=' + res.fileId),
+                  webViewLink: ''
+                });
+                return;
+              }
+              if (err && err.retryable && attempt <= 1) {
+                window.setTimeout(attemptFallback, 1200);
+              } else {
+                onDone(err || { message: 'อัปโหลดไม่สำเร็จ' }, null);
+              }
+            });
+          }
+
+          attemptFallback();
+        });
+      }
+
+      function startPreUploadForSlot(slotKey, onDoneOptional) {
+        var slot = state.slots[slotKey];
+        if (!slot || !slot.blob) {
+          if (typeof onDoneOptional === 'function') {
+            onDoneOptional('ไม่พบข้อมูลไฟล์');
+          }
+          return;
+        }
+
+        if (slot.status === 'uploaded' && slot.fileId) {
+          if (typeof onDoneOptional === 'function') {
+            onDoneOptional(null);
+          }
+          return;
+        }
+
+        if (!checkSetupPlaceholder()) {
+          slot.status = 'error';
+          slot.progress = 0;
+          slot.statusText = 'ยังไม่ได้ตั้งค่า GAS_WEB_APP_URL';
+          renderSlotPreview(slotKey);
+          syncSubmitLockState();
+          if (typeof onDoneOptional === 'function') {
+            onDoneOptional(slot.statusText);
+          }
+          return;
+        }
+
+        if (typeof navigator.onLine === 'boolean' && !navigator.onLine) {
+          slot.status = 'error';
+          slot.progress = 0;
+          slot.statusText = 'ไม่มีสัญญาณอินเทอร์เน็ต กดลองใหม่เมื่อต่อเน็ตแล้ว';
+          renderSlotPreview(slotKey);
+          syncSubmitLockState();
+          updateNetworkBanner(true);
+          if (typeof onDoneOptional === 'function') {
+            onDoneOptional(slot.statusText);
+          }
+          return;
+        }
+
+        var opToken = slot.opToken;
+        slot.status = 'uploading';
+        slot.progress = Math.max(25, slot.progress || 25);
+        slot.statusText = 'กำลังเตรียมอัปโหลดเข้า Google Drive...';
+        renderSlotPreview(slotKey);
+        syncSubmitLockState();
+
+        function handleSuccess(result) {
+          var current = state.slots[slotKey];
+          if (!current || current.opToken !== opToken) {
+            if (result && result.fileId) {
+              requestDeleteTempFile(result.fileId);
+            }
+            if (typeof onDoneOptional === 'function') {
+              onDoneOptional(null);
+            }
+            return;
+          }
+
+          current.fileId = result.fileId;
+          current.uploadedUrl = result.fileUrl || ('https://drive.google.com/open?id=' + result.fileId);
+          current.webViewLink = result.webViewLink || current.uploadedUrl;
+          current.status = 'uploaded';
+          current.progress = 100;
+          current.statusText = current.kind === 'video'
+            ? 'อัปโหลดวิดีโอล่วงหน้าแล้ว ✓'
+            : 'อัปโหลดล่วงหน้าแล้ว ✓';
+
+          renderSlotPreview(slotKey);
+          syncSubmitLockState();
+          showToast('อัปโหลด "' + SLOT_LABELS[slotKey] + '" เสร็จแล้ว', 'success');
+          if (typeof onDoneOptional === 'function') {
+            onDoneOptional(null);
+          }
+        }
+
+        function handleFailure(errObj) {
+          var current = state.slots[slotKey];
+          if (!current || current.opToken !== opToken) {
+            if (typeof onDoneOptional === 'function') {
+              onDoneOptional(null);
+            }
+            return;
+          }
+          if (errObj && errObj.aborted) {
+            return;
+          }
+          var msg = (errObj && errObj.message) ? errObj.message : 'อัปโหลดไม่สำเร็จ';
+          current.status = 'error';
+          current.progress = 0;
+          current.statusText = 'อัปโหลดไม่สำเร็จ: ' + msg;
+          renderSlotPreview(slotKey);
+          syncSubmitLockState();
+          showToast('อัปโหลด "' + SLOT_LABELS[slotKey] + '" ไม่สำเร็จ กรุณากดลองใหม่', 'error');
+          if (typeof onDoneOptional === 'function') {
+            onDoneOptional(msg);
+          }
+        }
+
+        var origin = getClientOrigin();
+        if (!origin) {
+          uploadViaGasFallback(slotKey, slot, opToken, function (fbErr, fbRes) {
+            if (fbErr) {
+              handleFailure(fbErr);
+            } else {
+              handleSuccess(fbRes);
+            }
+          });
+          return;
+        }
+
+        sendGasRequest({
+          action: 'init_resumable_upload',
+          fieldKey: slotKey,
+          mimeType: slot.mimeType,
+          fileSize: slot.blob.size,
+          fileName: slot.fileName,
+          clientOrigin: origin
+        }, CONFIG.INIT_TIMEOUT_MS, function (initErr, initRes) {
+          var current = state.slots[slotKey];
+          if (!current || current.opToken !== opToken) {
+            return;
+          }
+
+          if (initErr || !initRes || !initRes.uploadUrl) {
+            uploadViaGasFallback(slotKey, current, opToken, function (fbErr, fbRes) {
+              if (fbErr) {
+                handleFailure(fbErr);
+              } else {
+                handleSuccess(fbRes);
+              }
+            });
+            return;
+          }
+
+          current.progress = 35;
+          current.statusText = 'กำลังส่งข้อมูลเข้า Google Drive...';
+          renderSlotProgressOnly(slotKey);
+
+          uploadBinaryToResumableUrl(
+            initRes.uploadUrl,
+            current.blob,
+            current.mimeType,
+            current,
+            function (putPct) {
+              var cur = state.slots[slotKey];
+              if (!cur || cur.opToken !== opToken || cur.status !== 'uploading') {
+                return;
+              }
+              cur.progress = Math.max(35, Math.min(98, Math.round(35 + (putPct * 0.63))));
+              cur.statusText = 'กำลังอัปโหลดเข้า Google Drive... ' + putPct + '%';
+              renderSlotProgressOnly(slotKey);
+            },
+            function (putErr, putRes) {
+              var cur = state.slots[slotKey];
+              if (!cur || cur.opToken !== opToken) {
+                if (putRes && putRes.fileId) {
+                  requestDeleteTempFile(putRes.fileId);
+                }
+                return;
+              }
+
+              if (!putErr && putRes && putRes.fileId) {
+                handleSuccess(putRes);
+                return;
+              }
+
+              if (putErr && putErr.aborted) {
+                return;
+              }
+
+              // หากส่ง PUT ตรงไม่ได้ (เช่น CORS/เครือข่าย) สลับใช้ Fallback ผ่าน GAS ให้อัตโนมัติ
+              uploadViaGasFallback(slotKey, cur, opToken, function (fbErr, fbRes) {
+                if (fbErr) {
+                  handleFailure(fbErr);
+                } else {
+                  handleSuccess(fbRes);
+                }
+              });
+            }
+          );
+        });
+      }
+
+      function rotateSlotImage(slotKey) {
+        var slot = state.slots[slotKey];
+        if (!slot || slot.kind !== 'image' || (!slot.previewUrl && !slot.blob)) {
+          return;
+        }
+
+        function loadAndRotate(srcUrl, revokeAfterLoad) {
+          var img = new Image();
+          img.onload = function () {
+            if (revokeAfterLoad) {
+              var urlApi = window.URL || window.webkitURL;
+              if (urlApi && urlApi.revokeObjectURL) {
+                try { urlApi.revokeObjectURL(srcUrl); } catch (ignoreRev) {}
+              }
+            }
+            try {
+              var w = img.naturalWidth || img.width;
+              var h = img.naturalHeight || img.height;
+              var canvas = document.createElement('canvas');
+              canvas.width = h;
+              canvas.height = w;
+
+              var ctx = canvas.getContext('2d');
+              ctx.fillStyle = '#FFFFFF';
+              ctx.fillRect(0, 0, canvas.width, canvas.height);
+              ctx.translate(canvas.width / 2, canvas.height / 2);
+              ctx.rotate(Math.PI / 2);
+              ctx.drawImage(img, -w / 2, -h / 2);
+
+              var rotatedUrl = canvas.toDataURL('image/jpeg', CONFIG.IMAGE_QUALITY);
+              canvas.width = 1;
+              canvas.height = 1;
+
+              var rotatedBlob = dataUrlToBlob(rotatedUrl, 'image/jpeg');
+              if (!rotatedBlob) {
+                showToast('ไม่สามารถแปลงภาพที่หมุนได้', 'error');
+                return;
+              }
+
+              invalidateSubmissionId();
+              cleanupSlotResources(slot, true);
+
+              var newToken = state.nextOpToken++;
+              state.slots[slotKey] = {
+                kind: 'image',
+                status: 'uploading',
+                progress: 20,
+                statusText: 'กำลังอัปโหลดภาพที่หมุนใหม่...',
+                blob: rotatedBlob,
+                previewUrl: rotatedUrl,
+                isObjectPreviewUrl: false,
+                mimeType: 'image/jpeg',
+                fileName: slot.fileName || 'wound.jpg',
+                originalSize: slot.originalSize,
+                finalSize: rotatedBlob.size,
+                fileId: '',
+                uploadedUrl: '',
+                webViewLink: '',
+                wasFallbackRaw: false,
+                opToken: newToken,
+                activeXhr: null
+              };
+
+              renderSlotPreview(slotKey);
+              syncSubmitLockState();
+              showToast('หมุนภาพ "' + SLOT_LABELS[slotKey] + '" 90° และเริ่มอัปโหลดใหม่แล้ว', 'info');
+              startPreUploadForSlot(slotKey);
+            } catch (err) {
+              showToast('ไม่สามารถหมุนภาพนี้ได้บนอุปกรณ์ของท่าน', 'error');
+            }
+          };
+          img.onerror = function () {
+            if (revokeAfterLoad) {
+              var urlApi = window.URL || window.webkitURL;
+              if (urlApi && urlApi.revokeObjectURL) {
+                try { urlApi.revokeObjectURL(srcUrl); } catch (ignoreRev2) {}
+              }
+            }
+            showToast('ไม่สามารถโหลดภาพเพื่อหมุนได้', 'error');
+          };
+          img.src = srcUrl;
+        }
+
+        if (slot.previewUrl) {
+          loadAndRotate(slot.previewUrl, false);
+        } else {
+          createPreviewUrlForBlob(slot.blob, function (err, srcUrl, isObj) {
+            if (err) {
+              showToast('ไม่สามารถโหลดภาพเพื่อหมุนได้', 'error');
+              return;
+            }
+            loadAndRotate(srcUrl, isObj);
+          });
+        }
       }
 
       function removeSlotFile(slotKey) {
@@ -2073,10 +2783,24 @@
           return;
         }
         invalidateSubmissionId();
+        cleanupSlotResources(state.slots[slotKey], true);
         state.slots[slotKey] = null;
         renderSlotPreview(slotKey);
-        updateReadinessUI();
+        syncSubmitLockState();
         showToast('ลบไฟล์ออกจาก "' + SLOT_LABELS[slotKey] + '" แล้ว', 'info');
+      }
+
+      function renderSlotProgressOnly(slotKey) {
+        var slot = state.slots[slotKey];
+        var metaEl = document.getElementById('meta_' + slotKey);
+        var progWrap = document.getElementById('progWrap_' + slotKey);
+        var progFill = document.getElementById('progFill_' + slotKey);
+        if (!slot || !metaEl || !progWrap || !progFill) {
+          return;
+        }
+        metaEl.innerHTML = '';
+        metaEl.appendChild(document.createTextNode(slot.statusText || 'กำลังดำเนินการ...'));
+        progFill.style.width = Math.max(0, Math.min(100, slot.progress || 0)) + '%';
       }
 
       function renderSlotPreview(slotKey) {
@@ -2086,11 +2810,23 @@
         var imgEl = document.getElementById('img_' + slotKey);
         var metaEl = document.getElementById('meta_' + slotKey);
         var videoBox = document.getElementById('videoBox_' + slotKey);
+        var progWrap = document.getElementById('progWrap_' + slotKey);
+        var progFill = document.getElementById('progFill_' + slotKey);
+        var retryBtn = document.getElementById('retryBtn_' + slotKey);
 
         if (!slot) {
           removeClass(box, 'visible');
           imgEl.removeAttribute('src');
           metaEl.innerHTML = '';
+          if (progWrap) {
+            removeClass(progWrap, 'visible');
+          }
+          if (progFill) {
+            progFill.style.width = '0%';
+          }
+          if (retryBtn) {
+            retryBtn.style.display = 'none';
+          }
           if (videoBox) {
             removeClass(videoBox, 'visible');
             videoBox.innerHTML = '';
@@ -2113,8 +2849,12 @@
             document.getElementById('removeCell_extra').className = 'preview-tool-cell full-cell';
           }
         } else {
-          imgWrap.style.display = 'block';
-          imgEl.src = slot.dataUrl;
+          if (slot.previewUrl) {
+            imgWrap.style.display = 'block';
+            imgEl.src = slot.previewUrl;
+          } else {
+            imgWrap.style.display = 'none';
+          }
           if (videoBox) {
             removeClass(videoBox, 'visible');
           }
@@ -2127,19 +2867,38 @@
         metaEl.innerHTML = '';
         removeClass(metaEl, 'meta-uploaded');
         removeClass(metaEl, 'meta-pending');
+        removeClass(metaEl, 'meta-error');
 
-        var statusText;
-        if (slot.uploadedUrl) {
+        if (slot.status === 'uploaded') {
           addClass(metaEl, 'meta-uploaded');
-          statusText = 'อัปโหลดขึ้น Google Drive แล้ว ✓ (' + formatBytes(slot.finalSize) + ')';
-        } else if (slot.kind === 'video') {
-          statusText = 'วิดีโอพร้อมส่ง • ' + formatBytes(slot.finalSize);
-        } else if (slot.originalSize && slot.originalSize !== slot.finalSize) {
-          statusText = 'พร้อมส่ง • ' + formatBytes(slot.originalSize) + ' → ' + formatBytes(slot.finalSize);
+          if (progWrap) {
+            removeClass(progWrap, 'visible');
+          }
+          if (retryBtn) {
+            retryBtn.style.display = 'none';
+          }
+        } else if (slot.status === 'error') {
+          addClass(metaEl, 'meta-error');
+          if (progWrap) {
+            removeClass(progWrap, 'visible');
+          }
+          if (retryBtn) {
+            retryBtn.style.display = 'block';
+          }
         } else {
-          statusText = 'พร้อมส่ง • ' + formatBytes(slot.finalSize);
+          addClass(metaEl, 'meta-pending');
+          if (progWrap) {
+            addClass(progWrap, 'visible');
+          }
+          if (progFill) {
+            progFill.style.width = Math.max(0, Math.min(100, slot.progress || 0)) + '%';
+          }
+          if (retryBtn) {
+            retryBtn.style.display = 'none';
+          }
         }
-        metaEl.appendChild(document.createTextNode(statusText));
+
+        metaEl.appendChild(document.createTextNode(slot.statusText || 'กำลังเตรียมไฟล์...'));
       }
 
       // =========================================================================
@@ -2164,7 +2923,7 @@
         state.pendingConfirmAction = null;
       }
 
-      function resetAllFormFields(silent) {
+      function resetAllFormFields(silent, deleteRemoteTemps) {
         elPatientNameInput.value = '';
         var radios = document.getElementsByName('daysChoice');
         for (var i = 0; i < radios.length; i++) {
@@ -2175,13 +2934,15 @@
         clearValidationStates();
 
         for (var k = 0; k < SLOT_KEYS.length; k++) {
-          state.slots[SLOT_KEYS[k]] = null;
-          renderSlotPreview(SLOT_KEYS[k]);
+          var key = SLOT_KEYS[k];
+          cleanupSlotResources(state.slots[key], Boolean(deleteRemoteTemps));
+          state.slots[key] = null;
+          renderSlotPreview(key);
         }
 
         invalidateSubmissionId();
         storageRemove(CONFIG.DRAFT_KEY);
-        updateReadinessUI();
+        syncSubmitLockState();
 
         if (!silent) {
           showToast('ล้างข้อมูลแบบฟอร์มเรียบร้อยแล้ว', 'info');
@@ -2260,7 +3021,7 @@
       }
 
       // =========================================================================
-      // Step-by-Step Progress Overlay & Concurrent Upload + Smart Retry
+      // Step-by-Step Progress Overlay & Submit Flow
       // =========================================================================
       function setProgressBar(percent, labelText) {
         var clamped = Math.max(0, Math.min(100, Math.round(percent)));
@@ -2293,83 +3054,7 @@
         el.appendChild(document.createTextNode(SLOT_LABELS[slotKey] + ': ' + text));
       }
 
-      function prepareSlotPayloadData(slot, callback) {
-        if (slot.kind === 'video' && !slot.dataUrl && slot.file) {
-          readRawFileAsDataUrl(slot.file, function (err, dataUrl) {
-            if (err) {
-              callback(err);
-              return;
-            }
-            callback(null, dataUrl);
-          });
-          return;
-        }
-        callback(null, slot.dataUrl);
-      }
-
-      function uploadSingleSlotWithRetry(slotKey, patientName, daysText, onDone) {
-        var slot = state.slots[slotKey];
-        if (!slot || slot.uploadedUrl) {
-          setUploadSubItemStatus(slotKey, 'ส่งสำเร็จ ✓', '#166534');
-          onDone(null);
-          return;
-        }
-
-        var attempt = 0;
-
-        function attemptUpload(dataUrl) {
-          attempt++;
-          if (attempt === 1) {
-            setUploadSubItemStatus(slotKey, 'กำลังส่ง...', '#0B4A4A');
-          } else {
-            setUploadSubItemStatus(slotKey, 'กำลังลองส่งใหม่ (ครั้งที่ ' + attempt + ')...', '#92400E');
-          }
-
-          var payload = {
-            action: 'upload_file',
-            fieldKey: slotKey,
-            mimeType: slot.mimeType,
-            fileName: slot.fileName,
-            patientName: patientName,
-            daysAfterDischarge: daysText,
-            base64Data: dataUrl
-          };
-
-          sendGasRequest(payload, CONFIG.UPLOAD_TIMEOUT_MS, function (err, res) {
-            if (!err && res && res.fileUrl) {
-              slot.uploadedUrl = res.fileUrl;
-              renderSlotPreview(slotKey);
-              setUploadSubItemStatus(slotKey, 'ส่งสำเร็จ ✓', '#166534');
-              onDone(null);
-              return;
-            }
-
-            var canRetry = err && err.retryable && attempt <= CONFIG.MAX_RETRIES;
-            if (canRetry) {
-              var backoffMs = 1200 + Math.floor(Math.random() * 1300);
-              window.setTimeout(function () {
-                attemptUpload(dataUrl);
-              }, backoffMs);
-            } else {
-              var errMsg = (err && err.message) ? err.message : 'อัปโหลดไม่สำเร็จ';
-              setUploadSubItemStatus(slotKey, 'ไม่สำเร็จ (' + errMsg + ')', '#991B1B');
-              onDone(errMsg);
-            }
-          });
-        }
-
-        setUploadSubItemStatus(slotKey, 'กำลังเตรียมไฟล์...', '#0B4A4A');
-        prepareSlotPayloadData(slot, function (prepErr, dataUrl) {
-          if (prepErr) {
-            setUploadSubItemStatus(slotKey, 'ไม่สำเร็จ (' + prepErr + ')', '#991B1B');
-            onDone(prepErr);
-            return;
-          }
-          attemptUpload(dataUrl);
-        });
-      }
-
-      function uploadPendingSlotsParallel(pendingKeys, patientName, daysText, onProgress, onAllFinished) {
+      function uploadPendingSlotsParallel(pendingKeys, onProgress, onAllFinished) {
         if (pendingKeys.length === 0) {
           onAllFinished(0, []);
           return;
@@ -2389,11 +3074,15 @@
           while (activeCount < CONFIG.PARALLEL_UPLOADS && nextIndex < pendingKeys.length) {
             (function (key) {
               activeCount++;
-              uploadSingleSlotWithRetry(key, patientName, daysText, function (errMsg) {
+              setUploadSubItemStatus(key, 'กำลังอัปโหลด...', '#0B4A4A');
+              startPreUploadForSlot(key, function (errMsg) {
                 activeCount--;
                 completedCount++;
                 if (errMsg) {
+                  setUploadSubItemStatus(key, 'ไม่สำเร็จ (' + errMsg + ')', '#991B1B');
                   errors.push(SLOT_LABELS[key] + ': ' + errMsg);
+                } else {
+                  setUploadSubItemStatus(key, 'อัปโหลดสำเร็จ ✓', '#166534');
                 }
                 onProgress(completedCount, pendingKeys.length);
                 launchNext();
@@ -2440,6 +3129,11 @@
           return;
         }
 
+        if (getBusyUploadCount() > 0) {
+          showToast('กรุณารอให้การอัปโหลดรูปภาพเสร็จสมบูรณ์ก่อนกดส่ง', 'warning');
+          return;
+        }
+
         if (!checkSetupPlaceholder()) {
           showToast('กรุณาตั้งค่า GAS_WEB_APP_URL ในไฟล์ index.html ก่อนใช้งาน', 'error');
           return;
@@ -2455,7 +3149,7 @@
         }
 
         state.isSubmitting = true;
-        elSubmitBtn.disabled = true;
+        syncSubmitLockState();
 
         var patientName = trimStr(elPatientNameInput.value);
         var daysText = getDaysAfterDischargeValue();
@@ -2484,11 +3178,11 @@
             subDiv.id = 'substatus_' + key;
             subDiv.className = 'file-subitem';
             elFileProgressSublist.appendChild(subDiv);
-            if (slot.uploadedUrl) {
-              setUploadSubItemStatus(key, 'ส่งสำเร็จ ✓ (ข้ามไฟล์ที่ส่งแล้ว)', '#166534');
+            if (slot.status === 'uploaded' && slot.fileId) {
+              setUploadSubItemStatus(key, 'อัปโหลดล่วงหน้าแล้ว ✓', '#166534');
             } else {
               pendingKeys.push(key);
-              setUploadSubItemStatus(key, 'รอส่ง...', '#334155');
+              setUploadSubItemStatus(key, 'รอส่งซ้ำ...', '#334155');
             }
           }
         }
@@ -2500,14 +3194,14 @@
           setProgressBar(75, 'กำลังบันทึกข้อมูลลง Google Sheet...');
         } else if (pendingKeys.length === 0) {
           elStepUploadTitle.innerHTML = '';
-          elStepUploadTitle.appendChild(document.createTextNode('2. อัปโหลดไฟล์ไปยัง Google Drive — ส่งครบทุกไฟล์แล้ว ✓'));
+          elStepUploadTitle.appendChild(document.createTextNode('2. อัปโหลดไฟล์ล่วงหน้าเสร็จสมบูรณ์แล้ว (' + attachedKeys.length + ' ไฟล์) ✓'));
           setStepState(elStepUpload, 'step-done');
           setProgressBar(75, 'กำลังบันทึกข้อมูลลง Google Sheet...');
         } else {
           elStepUploadTitle.innerHTML = '';
-          elStepUploadTitle.appendChild(document.createTextNode('2. กำลังอัปโหลดไฟล์ไปยัง Google Drive (' + pendingKeys.length + ' ไฟล์)...'));
+          elStepUploadTitle.appendChild(document.createTextNode('2. กำลังอัปโหลดไฟล์ที่ค้างไปยัง Google Drive (' + pendingKeys.length + ' ไฟล์)...'));
           setStepState(elStepUpload, 'step-active');
-          setProgressBar(15, 'กำลังอัปโหลดไฟล์ไปยัง Google Drive...');
+          setProgressBar(25, 'กำลังอัปโหลดไฟล์ที่ค้างอยู่...');
         }
 
         setStepState(elStepSheet, '', '3. บันทึกข้อมูลลง Google Sheet (รอดำเนินการ)');
@@ -2515,10 +3209,8 @@
 
         uploadPendingSlotsParallel(
           pendingKeys,
-          patientName,
-          daysText,
           function (doneCount, totalCount) {
-            var pct = 15 + Math.round((doneCount / totalCount) * 60);
+            var pct = 25 + Math.round((doneCount / totalCount) * 50);
             setProgressBar(pct, 'อัปโหลดไฟล์แล้ว ' + doneCount + '/' + totalCount + ' ไฟล์');
           },
           function (errorCount, errors) {
@@ -2539,9 +3231,12 @@
             setProgressBar(80, 'กำลังบันทึกข้อมูลลง Google Sheet...');
 
             var filesPayload = {};
+            var fileIdsPayload = {};
             for (var k = 0; k < SLOT_KEYS.length; k++) {
               var sKey = SLOT_KEYS[k];
-              filesPayload[sKey] = state.slots[sKey] ? state.slots[sKey].uploadedUrl : '';
+              var sObj = state.slots[sKey];
+              filesPayload[sKey] = sObj ? sObj.uploadedUrl : '';
+              fileIdsPayload[sKey] = sObj ? sObj.fileId : '';
             }
 
             var recordPayload = {
@@ -2549,7 +3244,8 @@
               submissionId: state.submissionId,
               patientName: patientName,
               daysAfterDischarge: daysText,
-              files: filesPayload
+              files: filesPayload,
+              fileIds: fileIdsPayload
             };
 
             submitRecordWithRetry(recordPayload, function (recordErr, recordRes) {
@@ -2559,8 +3255,8 @@
                 return;
               }
 
-              setProgressBar(92, 'บันทึก Google Sheet แถวที่ ' + recordRes.rowNumber + ' สำเร็จ');
-              setStepState(elStepSheet, 'step-done', '3. บันทึกข้อมูลลง Google Sheet (แถวที่ ' + recordRes.rowNumber + ') สำเร็จ ✓');
+              setProgressBar(92, 'บันทึกข้อมูลลง Google Sheet สำเร็จ');
+              setStepState(elStepSheet, 'step-done', '3. บันทึกข้อมูลลง Google Sheet สำเร็จ ✓');
 
               if (recordRes.telegramSent) {
                 setStepState(elStepTelegram, 'step-done', '4. ส่งแจ้งเตือนเจ้าหน้าที่ (Telegram) เรียบร้อย ✓');
@@ -2570,7 +3266,7 @@
 
               setProgressBar(100, 'ดำเนินการเสร็จสมบูรณ์!');
               state.isSubmitting = false;
-              elSubmitBtn.disabled = false;
+              syncSubmitLockState();
 
               window.setTimeout(function () {
                 removeClass(elProgressOverlay, 'visible');
@@ -2583,7 +3279,7 @@
 
       function showSubmissionFailure(errorText) {
         state.isSubmitting = false;
-        elSubmitBtn.disabled = false;
+        syncSubmitLockState();
 
         elProgressTitle.innerHTML = '';
         elProgressTitle.appendChild(document.createTextNode('การส่งข้อมูลสะดุดชั่วคราว'));
@@ -2608,9 +3304,6 @@
 
         document.getElementById('receiptTime').innerHTML = '';
         document.getElementById('receiptTime').appendChild(document.createTextNode(res.timestamp || '-'));
-
-        document.getElementById('receiptRow').innerHTML = '';
-        document.getElementById('receiptRow').appendChild(document.createTextNode('แถวที่ ' + (res.rowNumber || '-')));
 
         var fileNamesList = [];
         for (var i = 0; i < attachedKeys.length; i++) {
@@ -2691,7 +3384,7 @@
           updateReadinessUI();
         };
 
-        // File inputs across all 5 slots
+        // File inputs across all 6 slots (เริ่มย่อภาพและอัปโหลดทันทีเมื่อเลือกไฟล์)
         var fileInputs = document.querySelectorAll('input[type="file"][data-slot]');
         for (var f = 0; f < fileInputs.length; f++) {
           (function (inputEl) {
@@ -2707,7 +3400,7 @@
           })(fileInputs[f]);
         }
 
-        // Rotate and Remove buttons
+        // Rotate, Remove and Retry buttons
         var rotateBtns = document.querySelectorAll('[data-rotate]');
         for (var rt = 0; rt < rotateBtns.length; rt++) {
           (function (btn) {
@@ -2726,12 +3419,28 @@
           })(removeBtns[rm]);
         }
 
+        var retrySlotBtns = document.querySelectorAll('[data-retry-slot]');
+        for (var rs = 0; rs < retrySlotBtns.length; rs++) {
+          (function (btn) {
+            btn.onclick = function () {
+              var sKey = btn.getAttribute('data-retry-slot');
+              if (sKey && state.slots[sKey]) {
+                startPreUploadForSlot(sKey);
+              }
+            };
+          })(retrySlotBtns[rs]);
+        }
+
         // Submit Form
         elWoundForm.onsubmit = function (ev) {
           if (ev && ev.preventDefault) {
             ev.preventDefault();
           }
           if (state.isSubmitting) {
+            return false;
+          }
+          if (getBusyUploadCount() > 0) {
+            showToast('กรุณารอให้การอัปโหลดรูปภาพเสร็จสมบูรณ์ก่อนกดส่ง', 'warning');
             return false;
           }
           if (!validateFormFields()) {
@@ -2761,7 +3470,7 @@
             'ยืนยันล้างข้อมูล',
             true,
             function () {
-              resetAllFormFields(false);
+              resetAllFormFields(false, true);
             }
           );
         };
@@ -2790,7 +3499,7 @@
 
         // New Submission Button on Success Screen
         elNewSubmissionBtn.onclick = function () {
-          resetAllFormFields(true);
+          resetAllFormFields(true, false);
           removeClass(elSuccessScreen, 'visible');
           elFormScreen.style.display = 'block';
           window.scrollTo(0, 0);
@@ -2806,8 +3515,8 @@
             updateNetworkBanner(true);
           });
           window.addEventListener('beforeunload', function (e) {
-            if (state.isSubmitting) {
-              var msg = 'กำลังส่งข้อมูลและรูปภาพ กรุณาอย่าปิดหน้าจอนี้';
+            if (state.isSubmitting || getBusyUploadCount() > 0) {
+              var msg = 'กำลังอัปโหลดหรือบันทึกข้อมูล กรุณาอย่าปิดหน้าจอนี้';
               e.returnValue = msg;
               return msg;
             }
@@ -2830,7 +3539,7 @@
         updateNetworkBanner(false);
         bindEvents();
         restoreDraft();
-        updateReadinessUI();
+        syncSubmitLockState();
       }
 
       init();
